@@ -1,0 +1,22 @@
+# Extra media for Room OS Lite (not in the Room OS pack)
+
+Downloaded from Wikimedia Commons Oct 7, 2026 (CT). Resized and re-encoded to 1600 px JPEG by scripts/build-media.sh.
+
+| File | Source | Author | License | Notes |
+|---|---|---|---|---|
+| msu_game_2024.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Davis_Wade_Stadium,_Arkansas_vs._Mississippi_State,_10-26-2024.jpg | PCN02WPS | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Davis Wade Stadium, Arkansas at Mississippi State, 2024 (resized) |
+| msu_exterior_2024.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Davis_Wade_Stadium_exterior,_10-25-2024.jpg | PCN02WPS | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Davis Wade Stadium from outside, 2024 (walk in; resized) |
+| msu_expansion.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:DavisWadeStadiumExpansion.jpg | Nateb2003 | CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0) | Davis Wade Stadium north end and stands (resized) |
+| msu_daviswade_pd.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:DavisWade.jpg | GooseMSU07 at English Wikipedia | Public domain | Tailgate tents on the lawn outside Davis Wade Stadium. Stand-in for the Junction: no licensed photo labeled as the Junction was found, and this exact spot is not confirmed (resized) |
+| msu_eggbowl_2009.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Egg_Bowl_2009.jpg | TylerDurdenXXX | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Egg Bowl 2009 at Davis Wade Stadium, full crowd (resized) |
+| msu_halftime_2009.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Halftime,_Egg_Bowl_2009.jpg | TylerDurdenXXX | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Halftime band on the field, Egg Bowl 2009 (resized) |
+| rc_game_2025.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Rocket_City_Trash_Pandas_vs_Chattanooga_Lookouts,_Madison_AL_June_2025.jpg | Paul Lowry | CC BY 2.0 (https://creativecommons.org/licenses/by/2.0) | Trash Pandas vs Chattanooga at Toyota Field, June 2025 (resized) |
+| rc_toyota_field.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Toyota_Field,_Madison_AL.jpg | AFBMRK | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Toyota Field, Madison AL, at dusk (resized) |
+| rc_berm.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:View_of_Toyota_Field_from_Budweiser_Berm.jpg | TheRealOne523 | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Toyota Field from the outfield berm (resized) |
+| rc_3rd_base.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Toyota_Field_as_seen_from_3rd_base_line.jpg | TheRealOne523 | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Toyota Field from the third base line (resized) |
+| hsv_skyline.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Skyline_of_Huntsville.jpg | Bren.persing | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Huntsville skyline over Big Spring Park in low light (morning; resized) |
+| hsv_downtown.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Downtown_Huntsville,_Alabama.jpg | Anivron | CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0) | Downtown Huntsville and Big Spring Park by day (resized) |
+| road_i22_ms25.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:I-22_US78_West_-_Exit_104_-_MS25_South_(44369721575).jpg | formulanone | CC BY-SA 2.0 (https://creativecommons.org/licenses/by-sa/2.0) | I-22 West at Exit 104, MS 25 South toward Starkville (the drive; resized) |
+| road_us82_signs.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Control_cities_ms-12_and_us-82.jpg | RomeoEchoDelta | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | US 82 and MS 12 signs near Starkville (the drive; resized) |
+| road_ms389.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:MS_389_North_of_Starkville.jpg | RomeoEchoDelta | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | MS 389 north of Starkville (the drive, ride home; resized) |
+| road_starkville_sign.jpg | Wikimedia Commons: https://commons.wikimedia.org/wiki/File:StarkvilleMSWelcomeSign.jpg | Chillin662 | CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0) | Starkville welcome sign, Home of Mississippi State University (arrival; resized) |

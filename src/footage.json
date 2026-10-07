@@ -1,0 +1,1138 @@
+{
+ "grade": {
+  "contrast": 1.06,
+  "saturate": 0.94,
+  "brightness": 0.96,
+  "tint": 0.1,
+  "vignette": 0.55,
+  "grain": 0.06,
+  "crossfade": 1.6
+ },
+ "sets": {
+  "padres": {
+   "arrival": [
+    {
+     "src": "s_sd_dusk_coronado.jpg",
+     "secs": 18,
+     "kb": "in"
+    }
+   ],
+   "tailgate": [
+    {
+     "src": "s_petco_behind_plate_upper.jpg",
+     "fx": [
+      "haze",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       40,
+       14,
+       60
+      ],
+      [
+       86,
+       40,
+       14,
+       60
+      ],
+      [
+       0,
+       82,
+       100,
+       18
+      ]
+     ],
+     "secs": 22,
+     "kb": "in"
+    },
+    {
+     "src": "s_sd_dusk_coronado.jpg",
+     "secs": 16,
+     "kb": "in"
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "s_petco_dusk_downtown.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       78,
+       40,
+       22
+      ],
+      [
+       58,
+       80,
+       42,
+       20
+      ]
+     ],
+     "secs": 22,
+     "kb": "in"
+    },
+    {
+     "src": "s_petco_night_behind_plate.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       72,
+       35,
+       28,
+       65
+      ],
+      [
+       0,
+       45,
+       12,
+       50
+      ],
+      [
+       0,
+       24,
+       42,
+       12
+      ],
+      [
+       58,
+       20,
+       42,
+       14
+      ]
+     ],
+     "secs": 22,
+     "kb": "out"
+    },
+    {
+     "src": "v_ballpark_aerial_night.mp4",
+     "secs": 10
+    },
+    {
+     "src": "s_petco_night_lower_level.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       80,
+       100,
+       20
+      ],
+      [
+       0,
+       30,
+       100,
+       20
+      ]
+     ],
+     "secs": 20,
+     "kb": "in"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "game": [
+    {
+     "src": "s_petco_night_behind_plate.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       72,
+       35,
+       28,
+       65
+      ],
+      [
+       0,
+       45,
+       12,
+       50
+      ],
+      [
+       0,
+       24,
+       42,
+       12
+      ],
+      [
+       58,
+       20,
+       42,
+       14
+      ]
+     ],
+     "secs": 28,
+     "kb": "in"
+    },
+    {
+     "src": "v_stadium_crowd_night.mp4",
+     "secs": 9,
+     "grade": "hue-rotate(-8deg)"
+    },
+    {
+     "src": "s_petco_night_lower_level.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       80,
+       100,
+       20
+      ],
+      [
+       0,
+       30,
+       100,
+       20
+      ]
+     ],
+     "secs": 22,
+     "kb": "left"
+    },
+    {
+     "src": "v_baseball_seats_night.mp4",
+     "secs": 9
+    },
+    {
+     "src": "s_petco_night_low.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       77,
+       100,
+       10
+      ],
+      [
+       0,
+       60,
+       35,
+       10
+      ]
+     ],
+     "secs": 18,
+     "kb": "right"
+    },
+    {
+     "src": "v_crowd_stands.mp4",
+     "secs": 10
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "v_crowd_confetti.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "s_petco_night_behind_plate.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       72,
+       35,
+       28,
+       65
+      ],
+      [
+       0,
+       45,
+       12,
+       50
+      ],
+      [
+       0,
+       24,
+       42,
+       12
+      ],
+      [
+       58,
+       20,
+       42,
+       14
+      ]
+     ],
+     "secs": 20,
+     "kb": "out"
+    }
+   ]
+  },
+  "saints": {
+   "arrival": [
+    {
+     "src": "s_nola_bourbon_night.jpg",
+     "secs": 20,
+     "kb": "in",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       70,
+       100,
+       30
+      ]
+     ]
+    }
+   ],
+   "tailgate": [
+    {
+     "src": "s_nola_brass_second_line.jpg",
+     "secs": 18,
+     "kb": "left",
+     "fx": [
+      "haze"
+     ]
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "s_dome_exterior_night.jpg",
+     "secs": 16,
+     "kb": "in",
+     "fx": [
+      "haze"
+     ]
+    },
+    {
+     "src": "s_dome_black_gold_fans.jpg",
+     "secs": 18,
+     "kb": "in",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       0,
+       60,
+       50
+      ]
+     ]
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "game": [
+    {
+     "src": "s_dome_upper_deck_wide.jpg",
+     "secs": 28,
+     "kb": "in",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       12,
+       100,
+       45
+      ]
+     ]
+    },
+    {
+     "src": "v_stadium_packed_roof.mp4",
+     "secs": 9
+    },
+    {
+     "src": "s_dome_endzone_2011.jpg",
+     "secs": 22,
+     "kb": "left",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       0,
+       100,
+       25
+      ],
+      [
+       0,
+       25,
+       15,
+       30
+      ]
+     ]
+    },
+    {
+     "src": "s_dome_mid_sideline.jpg",
+     "secs": 22,
+     "kb": "right",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       0,
+       100,
+       45
+      ]
+     ]
+    },
+    {
+     "src": "v_arena_crowd_lights.mp4",
+     "secs": 9
+    },
+    {
+     "src": "s_dome_upper_sideline.jpg",
+     "secs": 22,
+     "kb": "in",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       5,
+       100,
+       45
+      ]
+     ]
+    },
+    {
+     "src": "s_dome_black_gold_fans.jpg",
+     "secs": 20,
+     "kb": "in",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       0,
+       60,
+       50
+      ]
+     ]
+    },
+    {
+     "src": "v_crowd_stands.mp4",
+     "secs": 10
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_crowd_confetti.mp4"
+    },
+    {
+     "src": "v_fireworks_crowd.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "s_dome_exterior_night.jpg",
+     "secs": 20,
+     "kb": "out",
+     "fx": [
+      "haze"
+     ]
+    },
+    {
+     "src": "s_nola_bourbon_night.jpg",
+     "secs": 18,
+     "kb": "in",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       70,
+       100,
+       30
+      ]
+     ]
+    }
+   ]
+  },
+  "olemiss": {
+   "arrival": [],
+   "tailgate": [
+    {
+     "src": "s_grove_tailgate_crowd.jpg",
+     "secs": 20,
+     "kb": "in",
+     "fx": [
+      "haze",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       45,
+       100,
+       55
+      ]
+     ]
+    },
+    {
+     "src": "s_grove_tents_day.jpg",
+     "secs": 14,
+     "kb": "left",
+     "grade": "sepia(.25) brightness(.85)"
+    },
+    {
+     "src": "v_lights_in_trees.mp4",
+     "secs": 14
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "s_walk_of_champions.jpg",
+     "secs": 20,
+     "kb": "in",
+     "fx": [
+      "haze"
+     ]
+    },
+    {
+     "src": "s_vh_night_aerial_2.jpg",
+     "secs": 18,
+     "kb": "out",
+     "fx": [
+      "haze",
+      "flicker"
+     ]
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "game": [
+    {
+     "src": "s_vh_auburn_wall.jpg",
+     "secs": 28,
+     "kb": "in",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       40,
+       100,
+       60
+      ]
+     ]
+    },
+    {
+     "src": "v_stadium_crowd_night.mp4",
+     "secs": 9
+    },
+    {
+     "src": "s_vh_arkansas_2021.jpg",
+     "secs": 22,
+     "kb": "left",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       30,
+       100,
+       22
+      ],
+      [
+       0,
+       85,
+       100,
+       15
+      ],
+      [
+       80,
+       55,
+       20,
+       30
+      ]
+     ]
+    },
+    {
+     "src": "v_crowd_stands.mp4",
+     "secs": 9
+    },
+    {
+     "src": "s_grove_tailgate_crowd.jpg",
+     "secs": 18,
+     "kb": "in"
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "v_crowd_confetti.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "s_vh_night_aerial_2.jpg",
+     "secs": 20,
+     "kb": "out",
+     "fx": [
+      "haze",
+      "flicker"
+     ]
+    }
+   ]
+  },
+  "mlb": {
+   "tailgate": [
+    {
+     "src": "v_ballpark_aerial_night.mp4"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "v_ballpark_aerial_night.mp4"
+    }
+   ],
+   "game": [
+    {
+     "src": "v_baseball_seats_night.mp4"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    },
+    {
+     "src": "v_ballpark_aerial_night.mp4"
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "v_ballpark_aerial_night.mp4"
+    }
+   ]
+  },
+  "nfl": {
+   "tailgate": [
+    {
+     "src": "v_stadium_crowd_night.mp4"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "v_stadium_packed_roof.mp4"
+    }
+   ],
+   "game": [
+    {
+     "src": "v_stadium_crowd_night.mp4"
+    },
+    {
+     "src": "v_stadium_packed_roof.mp4"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    },
+    {
+     "src": "v_arena_crowd_lights.mp4"
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_crowd_confetti.mp4"
+    },
+    {
+     "src": "v_fireworks_crowd.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "v_stadium_crowd_night.mp4"
+    }
+   ]
+  },
+  "ncaaf": {
+   "tailgate": [
+    {
+     "src": "v_lights_in_trees.mp4"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "v_stadium_crowd_night.mp4"
+    }
+   ],
+   "game": [
+    {
+     "src": "v_stadium_crowd_night.mp4"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    },
+    {
+     "src": "v_stadium_packed_roof.mp4"
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_crowd_confetti.mp4"
+    },
+    {
+     "src": "v_fireworks_crowd.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "v_stadium_crowd_night.mp4"
+    }
+   ]
+  },
+  "msu": {
+   "morning": [
+    {
+     "src": "hsv_skyline.jpg",
+     "secs": 16,
+     "kb": "in",
+     "fx": [
+      "haze"
+     ],
+     "grade": "sepia(.25) saturate(1.1) brightness(1.02)"
+    },
+    {
+     "src": "hsv_downtown.jpg",
+     "secs": 14,
+     "kb": "right",
+     "fx": [
+      "haze"
+     ],
+     "grade": "sepia(.3) brightness(.95)"
+    }
+   ],
+   "drive": [
+    {
+     "src": "road_i22_ms25.jpg",
+     "secs": 10,
+     "kb": "in"
+    },
+    {
+     "src": "road_us82_signs.jpg",
+     "secs": 9,
+     "kb": "in"
+    },
+    {
+     "src": "road_ms389.jpg",
+     "secs": 10,
+     "kb": "in"
+    },
+    {
+     "src": "road_starkville_sign.jpg",
+     "secs": 9,
+     "kb": "out"
+    }
+   ],
+   "tailgate": [
+    {
+     "src": "msu_daviswade_pd.jpg",
+     "secs": 16,
+     "kb": "in",
+     "fx": [
+      "haze"
+     ]
+    },
+    {
+     "src": "msu_exterior_2024.jpg",
+     "secs": 14,
+     "kb": "right",
+     "fx": [
+      "haze"
+     ]
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "msu_exterior_2024.jpg",
+     "secs": 12,
+     "kb": "in",
+     "grade": "brightness(.85) sepia(.2)"
+    },
+    {
+     "src": "msu_expansion.jpg",
+     "secs": 14,
+     "kb": "left",
+     "fx": [
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       45,
+       100,
+       40
+      ]
+     ]
+    },
+    {
+     "src": "msu_game_2024.jpg",
+     "secs": 14,
+     "kb": "in",
+     "fx": [
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       30,
+       100,
+       25
+      ]
+     ]
+    }
+   ],
+   "game": [
+    {
+     "src": "msu_game_2024.jpg",
+     "secs": 16,
+     "kb": "in",
+     "fx": [
+      "shimmer",
+      "flicker"
+     ],
+     "crowd": [
+      [
+       0,
+       25,
+       100,
+       30
+      ]
+     ]
+    },
+    {
+     "src": "msu_eggbowl_2009.jpg",
+     "secs": 14,
+     "kb": "right",
+     "fx": [
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       0,
+       100,
+       45
+      ]
+     ]
+    },
+    {
+     "src": "v_stadium_crowd_night.mp4"
+    },
+    {
+     "src": "msu_expansion.jpg",
+     "secs": 14,
+     "kb": "left",
+     "fx": [
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       30,
+       40,
+       70,
+       40
+      ]
+     ]
+    },
+    {
+     "src": "msu_halftime_2009.jpg",
+     "secs": 14,
+     "kb": "in",
+     "fx": [
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       0,
+       100,
+       40
+      ]
+     ]
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "v_crowd_confetti.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "road_ms389.jpg",
+     "secs": 14,
+     "kb": "in",
+     "grade": "brightness(.62) saturate(.8) hue-rotate(-8deg)"
+    },
+    {
+     "src": "hsv_skyline.jpg",
+     "secs": 14,
+     "kb": "out",
+     "grade": "brightness(.7) saturate(.9)"
+    }
+   ]
+  },
+  "trashpandas": {
+   "tailgate": [
+    {
+     "src": "rc_toyota_field.jpg",
+     "secs": 16,
+     "kb": "in",
+     "fx": [
+      "haze"
+     ]
+    },
+    {
+     "src": "rc_berm.jpg",
+     "secs": 14,
+     "kb": "right",
+     "fx": [
+      "haze"
+     ]
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "rc_3rd_base.jpg",
+     "secs": 14,
+     "kb": "in"
+    },
+    {
+     "src": "rc_toyota_field.jpg",
+     "secs": 14,
+     "kb": "out",
+     "fx": [
+      "haze"
+     ]
+    }
+   ],
+   "game": [
+    {
+     "src": "rc_game_2025.jpg",
+     "secs": 16,
+     "kb": "in",
+     "fx": [
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       70,
+       100,
+       30
+      ]
+     ]
+    },
+    {
+     "src": "rc_3rd_base.jpg",
+     "secs": 14,
+     "kb": "right"
+    },
+    {
+     "src": "v_baseball_seats_night.mp4"
+    },
+    {
+     "src": "rc_berm.jpg",
+     "secs": 14,
+     "kb": "left"
+    },
+    {
+     "src": "rc_toyota_field.jpg",
+     "secs": 14,
+     "kb": "in",
+     "fx": [
+      "flicker"
+     ]
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_fireworks_crowd.mp4"
+    },
+    {
+     "src": "rc_toyota_field.jpg",
+     "secs": 14,
+     "kb": "in",
+     "grade": "brightness(.62) saturate(.8) hue-rotate(-8deg)"
+    }
+   ]
+  },
+  "sky": {
+   "tailgate": [
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "v_arena_crowd_lights.mp4"
+    }
+   ],
+   "game": [
+    {
+     "src": "v_arena_crowd_lights.mp4"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    },
+    {
+     "src": "v_stadium_packed_roof.mp4"
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_crowd_confetti.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_crowd_confetti.mp4"
+    },
+    {
+     "src": "v_arena_crowd_lights.mp4"
+    }
+   ]
+  },
+  "wnba": {
+   "tailgate": [
+    {
+     "src": "v_crowd_stands.mp4"
+    }
+   ],
+   "walkIn": [
+    {
+     "src": "v_arena_crowd_lights.mp4"
+    }
+   ],
+   "game": [
+    {
+     "src": "v_arena_crowd_lights.mp4"
+    },
+    {
+     "src": "v_crowd_stands.mp4"
+    },
+    {
+     "src": "v_stadium_packed_roof.mp4"
+    }
+   ],
+   "celebrate": [
+    {
+     "src": "v_crowd_confetti.mp4"
+    }
+   ],
+   "postgame": [
+    {
+     "src": "v_crowd_confetti.mp4"
+    },
+    {
+     "src": "v_arena_crowd_lights.mp4"
+    }
+   ]
+  }
+ }
+}

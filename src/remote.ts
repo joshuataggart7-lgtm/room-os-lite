@@ -1,0 +1,94 @@
+/** The phone remote: enter the code from the big screen, then fire moments, switch scenes and set volume. */
+import { fill, h } from "./dom";
+import { RemoteLink, type Msg } from "./link";
+import { remoteButtons } from "./moments";
+import { playersPanel } from "./playersPanel";
+import { PACKS, type Team } from "./teams";
+
+export function mountRemote(root: HTMLElement) {
+  const q = new URLSearchParams(location.hash.split("?")[1] ?? "");
+  const link = new RemoteLink();
+  let code = (q.get("c") ?? localStorage.getItem("lite.code") ?? "").toUpperCase();
+  let state: any = null;
+
+  const view = h("div.remote");
+  root.replaceChildren(view);
+
+  function askCode(msg = "") {
+    const inp = h("input.code-in", { inputmode: "text", autocapitalize: "characters", autocomplete: "off", maxlength: 4, placeholder: "ABCD", value: code, "aria-label": "Pairing code" }) as HTMLInputElement;
+    const go = () => { const c = inp.value.trim().toUpperCase(); if (c.length === 4) { code = c; connect(); } else inp.focus(); };
+    inp.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+    inp.addEventListener("input", () => { inp.value = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, ""); if (inp.value.length === 4) go(); });
+    view.replaceChildren(h("div.r-pair", {},
+      h("div.logo-word", {}, h("b", {}, "ROOM OS"), h("span", {}, "LITE")),
+      h("h1", {}, "Phone remote"),
+      h("p", {}, "Enter the 4 letter code in the corner of the big screen."),
+      inp,
+      msg ? h("p.err", {}, msg) : null,
+      h("button.big", { onclick: go }, "Connect"),
+      h("a.muted-link", { href: "#/" }, "Back")));
+    setTimeout(() => inp.focus(), 50);
+  }
+
+  function connect() {
+    view.replaceChildren(h("div.r-pair", {}, h("div.spinner"), h("p", {}, `Connecting to ${code}...`)));
+    link.onState = (s, why) => {
+      if (s === "connected") { localStorage.setItem("lite.code", code); render(); }
+      if (s === "failed") askCode(why === "nocode" ? "No screen with that code. Check the code on the big screen." : "Couldn't connect. Make sure the screen is open, then try again.");
+      if (s === "closed") askCode("The screen closed. Enter the code again when it's back.");
+    };
+    link.onMsg = (m: Msg) => {
+      if (m.t === "state") { state = m; render(); }
+      if (m.t === "moment") flashBtn(m.k);
+      if (m.t === "alert") note(`${m.title}. ${m.sub}`);
+    };
+    link.connect(code);
+  }
+
+  const send = (m: Msg) => { link.send(m); try { navigator.vibrate?.(20); } catch { /* */ } };
+  function flashBtn(k: string) { view.querySelectorAll<HTMLElement>(`[data-k="${k}"]`).forEach((b) => { b.classList.remove("hit"); void b.offsetWidth; b.classList.add("hit"); }); }
+
+  let noteT = 0;
+  function note(text: string) {
+    let n = view.querySelector<HTMLElement>(".r-alert");
+    if (!n) { n = h("div.r-alert"); view.prepend(n); }
+    n.textContent = text; n.classList.add("show");
+    clearTimeout(noteT); noteT = window.setTimeout(() => n!.classList.remove("show"), 6000);
+  }
+  let showPlayers = false;
+  let panelEl: HTMLElement | null = null;
+  let logoTaps: number[] = [];
+  function render() {
+    if (panelEl && panelEl.contains(document.activeElement)) return; // don't yank the keyboard mid-search
+    const t: Team | undefined = state?.team ? ({ ...PACKS[0], ...state.team } as Team) : undefined;
+    if (!t) { view.replaceChildren(h("div.r-pair", {}, h("div.spinner"), h("p", {}, "Connected. Waiting for the screen..."))); return; }
+    const sc = state.score;
+    const vol = h("input", { type: "range", min: 0, max: 100, value: Math.round((state.vol ?? 0.8) * 100), "aria-label": "Volume" }) as HTMLInputElement;
+    vol.onchange = () => send({ t: "vol", v: Number(vol.value) / 100 });
+    const delay = h("input", { type: "range", min: 0, max: 90, value: state.delay ?? 0, "aria-label": "TV delay" }) as HTMLInputElement;
+    const dl = h("span.val", {}, state.delay ? `${state.delay}s` : "Off");
+    delay.oninput = () => { dl.textContent = Number(delay.value) ? `${delay.value}s` : "Off"; };
+    delay.onchange = () => send({ t: "delay", v: Number(delay.value) });
+    const btns = remoteButtons(t);
+    fill(view,
+      h("header.r-top", { style: { "--team": t.color, "--alt": t.alt } as any },
+        t.logo ? h("img", { src: t.logo, alt: "", onclick: () => { const now = Date.now(); logoTaps = [...logoTaps.filter((x) => now - x < 3000), now]; if (logoTaps.length >= 5) { logoTaps = []; send({ t: "egg" }); } } }) : null,
+        h("div", {}, h("b", {}, t.fullName), h("span", {}, `Connected to ${code}`)),
+        sc ? h("div.r-score", {}, h("span", {}, `${sc.them[0]} ${sc.state === "pre" ? "" : sc.them[1]}`), h("span", {}, `${sc.us[0]} ${sc.state === "pre" ? "" : sc.us[1]}`), h("em", {}, sc.detail)) : null),
+      !state.started ? h("div.r-note", {}, "Tap Start on the big screen once so it can play sound. ", h("button", { onclick: () => send({ t: "start" }) }, "Try from here")) : null,
+      h("div.r-grid", {}, ...btns.map((b) => h(`button.r-btn${b.big ? ".big" : ""}`, { "data-k": b.k, onclick: () => send({ t: "moment", k: b.k }), style: { "--team": t.color, "--alt": t.alt } as any }, b.label))),
+      h("button.r-day", { onclick: () => send({ t: "day", v: state.day ? "stop" : "go" }) }, state.day ? "Stop the full day demo" : "Play full day (demo)"),
+      h("h3.r-h", {}, "Game day"),
+      h("div.r-step", {}, h("button.seg", { onclick: () => send({ t: "step", v: -1 }), "aria-label": "Previous" }, "‹ Back"), h("b", {}, (state.scenes ?? []).find((x: any) => x.id === state.scene)?.label ?? ""), h("button.seg", { onclick: () => send({ t: "step", v: 1 }), "aria-label": "Next" }, "Next ›")),
+      h("div.r-scenes", {}, ...(state.scenes ?? []).map((s: any) => h(`button.seg${state.scene === s.id ? ".on" : ""}`, { onclick: () => send({ t: "scene", v: s.id }) }, s.label))),
+      h("label.r-slider", {}, h("span", {}, "Volume"), vol),
+      h("label.r-slider", {}, h("span", {}, "TV delay"), delay, dl),
+      h("p.r-tip", {}, "TV delay holds the crowd and score until your TV catches up. Try 30 to 45 seconds for streaming TV."),
+      h("button.r-players-btn", { onclick: () => { showPlayers = !showPlayers; panelEl = null; render(); } }, showPlayers ? "Hide My Players" : `My Players (${(state.players ?? []).length})`),
+      showPlayers ? (panelEl ??= playersPanel((list) => send({ t: "players", v: list }), state.players ?? [])) : null,
+      h("button.muted-link", { onclick: () => { link.close(); localStorage.removeItem("lite.code"); code = ""; askCode(); } }, "Disconnect"),
+    );
+  }
+
+  if (code.length === 4) connect(); else askCode();
+}
