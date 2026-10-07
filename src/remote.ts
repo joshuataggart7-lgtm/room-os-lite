@@ -5,6 +5,7 @@ import { RemoteLink, type Msg } from "./link";
 import { remoteButtons } from "./moments";
 import { playersPanel } from "./playersPanel";
 import { PACKS, type Team } from "./teams";
+import { parlayPanel } from "./parlay";
 
 export function mountRemote(root: HTMLElement) {
   const q = new URLSearchParams(location.hash.split("?")[1] ?? "");
@@ -60,8 +61,9 @@ export function mountRemote(root: HTMLElement) {
   let panelEl: HTMLElement | null = null;
   let logoTaps: number[] = [];
   let showWalkups = false, wuEl: HTMLElement | null = null;
+  let showParty = false, partyEl: HTMLElement | null = null, showParlay = false, parlayEl: HTMLElement | null = null;
   function render() {
-    if ((panelEl && panelEl.contains(document.activeElement)) || (wuEl && wuEl.contains(document.activeElement))) return; // don't yank the keyboard mid-search
+    if ([panelEl, wuEl, partyEl, parlayEl].some((x) => x && x.contains(document.activeElement))) return; // don't yank the keyboard mid-search
     const t: Team | undefined = state?.team ? ({ ...PACKS[0], ...state.team } as Team) : undefined;
     if (!t) { view.replaceChildren(h("div.r-pair", {}, h("div.spinner"), h("p", {}, "Connected. Waiting for the screen..."))); return; }
     const sc = state.score;
@@ -90,12 +92,29 @@ export function mountRemote(root: HTMLElement) {
       h("label.r-slider", {}, h("span", {}, "TV delay"), delay, dl),
       state.mlbId ? h("button.r-players-btn", { onclick: () => { showWalkups = !showWalkups; wuEl = null; render(); } }, showWalkups ? "Hide walk-up songs" : `Walk-up songs: ${state.walkups?.on ? "on" : "off"}`) : null,
       state.mlbId && showWalkups ? (wuEl ??= walkupPanel(state.mlbId, state.walkups ?? { on: false, picks: {} }, (w) => send({ t: "walkups", v: w }), (x) => send({ t: "walkupTest", id: x.id }))) : null,
+      h("button.r-players-btn", { onclick: () => { showParty = !showParty; partyEl = null; render(); } }, showParty ? "Hide watch party" : `Watch party: ${state.party?.state === "connected" ? `linked with ${state.party.host || "the room"}` : state.party?.state === "connecting" ? "connecting" : "not linked"}`),
+      showParty ? (partyEl = partyBox()) : null,
+      state.parlayCtx ? h("button.r-players-btn", { onclick: () => { showParlay = !showParlay; parlayEl = null; render(); } }, showParlay ? "Hide parlay tracker" : `Parlay tracker (${(state.parlays ?? []).length})`) : null,
+      state.parlayCtx && showParlay ? (parlayEl ??= parlayPanel({ team: t, ...state.parlayCtx }, state.parlays ?? [], (list) => { send({ t: "parlays", v: list }); parlayEl = null; })) : null,
       h("button.r-players-btn", { onclick: () => send({ t: "music", v: !state.musicOn }) }, state.musicOn ? "Spotify music: on" : "Spotify music: off"),
       h("p.r-tip", {}, "TV delay holds the crowd and score until your TV catches up. Try 30 to 45 seconds for streaming TV."),
       h("button.r-players-btn", { onclick: () => { showPlayers = !showPlayers; panelEl = null; render(); } }, showPlayers ? "Hide My Players" : `My Players (${(state.players ?? []).length})`),
       showPlayers ? (panelEl ??= playersPanel((list) => send({ t: "players", v: list }), state.players ?? [])) : null,
       h("button.muted-link", { onclick: () => { link.close(); localStorage.removeItem("lite.code"); code = ""; askCode(); } }, "Disconnect"),
     );
+  }
+
+  /** Watch party: link the big screen with Joshua's room and send cheers from the phone. */
+  function partyBox(): HTMLElement {
+    const p = state.party ?? {};
+    const inp = h("input", { maxlength: 6, autocapitalize: "characters", autocomplete: "off", placeholder: "ABC234", value: p.code ?? "", "aria-label": "Watch party code" }) as HTMLInputElement;
+    inp.oninput = () => { inp.value = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, ""); };
+    return h("div.r-party", {},
+      h("p.r-tip", {}, "Enter the 6 character code from Joshua's Room OS remote (Game night). His big plays fire on your screen after your TV delay; your cheers show on his projectors."),
+      inp,
+      h("div.r-scenes", {}, h("button.seg.on", { onclick: () => { send({ t: "partyJoin", code: inp.value }); partyEl = null; } }, "Join"), p.state && p.state !== "off" ? h("button.seg", { onclick: () => { send({ t: "partyLeave" }); partyEl = null; } }, "Leave") : null),
+      p.state === "failed" ? h("p.r-tip", {}, `${p.why}. Trying again on its own.`) : null,
+      p.state === "connected" ? h("div.r-cheers", {}, ...(state.partyEmoji ?? []).map((e: string) => h("button.seg", { onclick: () => send({ t: "partyCheer", emoji: e }) }, e)), ...(state.partyTalk ?? []).map((x: string) => h("button.seg", { onclick: () => send({ t: "partyCheer", talk: x }) }, x))) : null);
   }
 
   if (code.length === 4) connect(); else askCode();

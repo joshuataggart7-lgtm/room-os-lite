@@ -1,5 +1,6 @@
 /** The stadium screen: footage, crowd sound, the game day journey, live score bug, jumbotron moments, My Players and the phone link. */
 import qrcode from "qrcode-generator";
+import "./gamenight.css";
 import { Audio } from "./audio";
 import { $, add, fill, h } from "./dom";
 import { diff, findEvent, pollEvent, seriesFlag, simSnapshots, type MomentKind, type Snapshot } from "./espn";
@@ -15,6 +16,9 @@ import { loadPlayers, savePlayers, Watcher, type Alert, type Player } from "./pl
 import { playersPanel } from "./playersPanel";
 import { playlist, Reel } from "./reel";
 import { SPORT, type Team } from "./teams";
+import { PartyGuest } from "./party";
+import { PARTY_EMOJI, PARTY_TALK, parlayChanges, type ParlayView, type Parlay } from "./gncore";
+import { evaluateAll, gameOf, loadParlays, parlayCard, parlayPanel, players as boxPlayers, saveParlays } from "./parlay";
 
 export type { Scene };
 
@@ -45,6 +49,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
     outcome: undefined as Outcome, elim: false, ks: 0, demoKs: 0, hypeDone: false, lastPitcher: 0, walkups: loadWalkups() as Walkups, lastBatter: 0,
   };
   audio.volume = st.vol;
+  const lastFired = new Map<string, number>(); // when each moment kind last fired here (watch party dedupe)
   const chap = (s: Scene) => st.chapters.find((c) => c.id === s) ?? st.chapters[st.chapters.length - 2];
 
   // ---------- layout
@@ -67,6 +72,9 @@ export function mountScreen(root: HTMLElement, team: Team) {
   const musicCard = h("div.panel.music-card.hidden");
   const walkupCard = h("div.panel.music-card.walkup-card.hidden");
   const nowBat = h("div.nowbat.hidden");
+  const partyCard = h("div.panel.music-card.party-card.hidden");
+  const parlayPanelCard = h("div.panel.music-card.parlay-card.hidden");
+  const plOverlay = h("div.pl-overlay");
   const music = new Music();
   const hype = new HypePlayer();
   const P = team.set === "padres";
@@ -80,7 +88,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
       h("button.start-btn", { onclick: () => start() }, "Tap to start"),
       h("p.start-hint", {}, "Turn the sound up. On iPhone or iPad, switch off silent mode."),
     ));
-  const screen = h("div.screen", { "data-set": team.set, style: { "--team": team.color, "--alt": team.alt } as any }, reel.el, tod, fw.canvas, flash, h("div.scrim"), brand, seriesStrip, kBoard, chapterCard, bug, lower, jumbo, closerEl, nowBat, toast, dayBar, music.el, pairChip, pairCard, playersCard, musicCard, walkupCard, dock, hype.el, egg, startCover);
+  const screen = h("div.screen", { "data-set": team.set, style: { "--team": team.color, "--alt": team.alt } as any }, reel.el, tod, fw.canvas, flash, h("div.scrim"), brand, seriesStrip, kBoard, chapterCard, bug, lower, jumbo, closerEl, nowBat, toast, dayBar, music.el, pairChip, pairCard, playersCard, musicCard, walkupCard, partyCard, parlayPanelCard, plOverlay, dock, hype.el, egg, startCover);
   root.replaceChildren(screen);
 
   // ---------- controls
@@ -103,6 +111,8 @@ export function mountScreen(root: HTMLElement, team: Team) {
     h("button.dock-btn", { onclick: () => togglePanel(playersCard) }, "My players"),
     h("button.dock-btn", { onclick: () => togglePanel(musicCard) }, "Music"),
     P && team.mlbId ? h("button.dock-btn", { onclick: () => { renderWalkupCard(); togglePanel(walkupCard); } }, "Walk-up songs") : null,
+    h("button.dock-btn", { onclick: () => { renderParty(); togglePanel(partyCard); } }, "Watch party"),
+    h("button.dock-btn", { onclick: () => { renderParlayPanel(); togglePanel(parlayPanelCard); } }, "Parlay"),
     h("button.dock-btn", { onclick: () => togglePanel(pairCard) }, "Phone remote"),
     document.fullscreenEnabled || (document as any).webkitFullscreenEnabled ? h("button.dock-btn", { onclick: () => fullscreen(true) }, "Full screen") : null,
     h("a.dock-btn", { href: "#/" }, "Change team"),
@@ -145,7 +155,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
 
   // Idle: hide the dock and cursor after a few seconds without input.
   let idle = 0;
-  const panelsOpen = () => !pairCard.classList.contains("hidden") || !playersCard.classList.contains("hidden") || !musicCard.classList.contains("hidden") || !walkupCard.classList.contains("hidden");
+  const panelsOpen = () => !pairCard.classList.contains("hidden") || !playersCard.classList.contains("hidden") || !musicCard.classList.contains("hidden") || !walkupCard.classList.contains("hidden") || !partyCard.classList.contains("hidden") || !parlayPanelCard.classList.contains("hidden");
   const wake = () => { screen.classList.remove("idle"); clearTimeout(idle); idle = window.setTimeout(() => { if (!panelsOpen()) screen.classList.add("idle"); }, 4500); };
   ["mousemove", "touchstart", "keydown", "click"].forEach((e) => window.addEventListener(e, wake, { passive: true }));
   wake();
@@ -207,6 +217,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
 
   // ---------- moments
   function trigger(k: MomentKind, demo = false) {
+    lastFired.set(k, Date.now());
     if (!st.started) start();
     const m = moment(team, k);
     if (m.quiet) { m.cues.forEach((c) => void audio.play(c.s, c)); return; }
@@ -411,7 +422,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
   }
   function togglePanel(p: HTMLElement, on?: boolean) {
     const show = on ?? p.classList.contains("hidden");
-    [pairCard, playersCard, musicCard, walkupCard].forEach((x) => x.classList.toggle("hidden", x === p ? !show : true));
+    [pairCard, playersCard, musicCard, walkupCard, partyCard, parlayPanelCard].forEach((x) => x.classList.toggle("hidden", x === p ? !show : true));
     wake();
   }
   link.onStatus = () => renderPair();
@@ -431,6 +442,10 @@ export function mountScreen(root: HTMLElement, team: Team) {
     else if (m.t === "hello") broadcast();
     else if (m.t === "walkups" && m.v && typeof m.v === "object") { setWalkups(m.v as Walkups); renderWalkupCard(); toastMsg("Walk-up songs", st.walkups.on ? `On for ${Object.keys(st.walkups.picks).length} hitters` : "Off"); }
     else if (m.t === "walkupTest" && Number(m.id)) void testWalkup(Number(m.id));
+    else if (m.t === "partyJoin" && typeof m.code === "string") party.join(m.code, partyName());
+    else if (m.t === "partyLeave") party.leave();
+    else if (m.t === "partyCheer") sendCheer({ emoji: typeof m.emoji === "string" ? m.emoji : undefined, talk: typeof m.talk === "string" ? m.talk : undefined });
+    else if (m.t === "parlays" && Array.isArray(m.v)) { setParlays(m.v as Parlay[]); renderParlayPanel(); toastMsg("Parlay tracker", `${parlays.length} bet${parlays.length === 1 ? "" : "s"} tracked`); }
   };
   renderPair();
   link.start();
@@ -443,12 +458,83 @@ export function mountScreen(root: HTMLElement, team: Team) {
       started: st.started, scene: st.scene, scenes: st.chapters.map((c) => ({ id: c.id, label: c.label })), vol: st.vol, delay: st.delay, day: !!st.dayDemo && !dayBar.classList.contains("hidden"), players,
       hype: !!hypePlan(team, null), mlbId: P ? team.mlbId : 0, walkups: st.walkups, music: music.now ? { title: music.now.title, artist: music.now.artist, url: openUrl(music.now) } : null, musicOn: music.enabled,
       series: s?.series ? { text: [s.series.note, s.series.summary].filter(Boolean).join(" · "), flag: seriesFlag(s.series) } : null,
+      party: { state: party.state, code: party.code, host: party.host, why: party.why }, partyEmoji: PARTY_EMOJI, partyTalk: PARTY_TALK,
+      parlays, parlayViews: plViews, parlayCtx: parlayCtx(),
       score: s ? { state: s.state, detail: s.state === "pre" ? fmtTime(s.date) : s.detail, us: [s.us.abbr, s.us.score], them: [s.them.abbr, s.them.score] } : null,
     });
   }
 
+  // ---------- watch party with Joshua's room (Room OS)
+  const party = new PartyGuest();
+  const partyName = () => localStorage.getItem("lite.partyName") || "Guest";
+  party.onChange = () => { renderParty(); broadcast(); if (party.state === "connected") toastMsg("Watch party", `Linked with ${party.host || "the room"}`); };
+  party.onMoment = (m) => {
+    // Wait for this screen's own TV delay from the play's feed time, so the room never spoils it.
+    const wait = Math.max(0, m.feedTs + st.delay * 1000 - Date.now());
+    setTimeout(() => {
+      const who = party.host || "Joshua's room";
+      const kind = m.kind as MomentKind;
+      // Lite saw the same play itself in the last 90 seconds: just say the room is going too.
+      if (Date.now() - (lastFired.get(kind) ?? 0) < 90000) { toastMsg(`${who} too`, m.title); return; }
+      toastMsg(`From ${who}`, m.sub ?? m.title);
+      trigger(kind);
+    }, Math.min(wait, 120000));
+  };
+  function sendCheer(x: { emoji?: string; talk?: string }) {
+    if (party.cheer(partyName(), x)) toastMsg("Sent to the room", [x.emoji, x.talk].filter(Boolean).join(" "));
+    else toastMsg("Watch party", "Not linked yet. Enter the room's code first.");
+  }
+  function renderParty() {
+    const code = h("input.code-in", { maxlength: 6, autocapitalize: "characters", autocomplete: "off", placeholder: "ABC234", value: party.code, "aria-label": "Watch party code" }) as HTMLInputElement;
+    code.oninput = () => { code.value = code.value.toUpperCase().replace(/[^A-Z0-9]/g, ""); };
+    const name = h("input", { value: partyName(), maxlength: 20, "aria-label": "Your name" }) as HTMLInputElement;
+    name.onchange = () => localStorage.setItem("lite.partyName", name.value.trim().slice(0, 20) || "Guest");
+    const status = party.state === "connected" ? `Linked with ${party.host || "the room"}. Their big plays fire here after your TV delay.` : party.state === "connecting" ? "Connecting..." : party.state === "failed" ? `${party.why}. Trying again on its own.` : "Enter the 6 character code from Joshua's Room OS remote (Game night).";
+    fill(partyCard, h("h3", {}, "Watch party"),
+      h("p.muted", {}, "Link this screen with Joshua's game room. Home runs, runs and the win fire here too, and your cheers pop up on his projectors."),
+      h("div.mc-row", {}, code, h("button.dock-btn.primary", { onclick: () => party.join(code.value, partyName()) }, "Join"), party.state !== "off" ? h("button.dock-btn", { onclick: () => party.leave() }, "Leave") : null),
+      h("label.dock-slider", {}, h("span", {}, "Your name"), name),
+      h(`p${party.state === "connected" ? ".ok" : ".muted"}`, {}, status),
+      party.state === "connected" ? h("div.party-cheers", {}, ...PARTY_EMOJI.map((e) => h("button.seg", { onclick: () => sendCheer({ emoji: e }) }, e)), ...PARTY_TALK.map((t) => h("button.seg", { onclick: () => sendCheer({ talk: t }) }, t))) : null,
+      h("button.x", { onclick: () => togglePanel(partyCard, false), "aria-label": "Close" }, "×"));
+  }
+  party.resume(partyName());
+
+  // ---------- parlay tracker (this device only)
+  let parlays: Parlay[] = loadParlays();
+  let plViews: ParlayView[] = [];
+  const setParlays = (list: Parlay[]) => { parlays = list.slice(-10); saveParlays(parlays); void refreshParlays(); broadcast(); };
+  const parlayCtx = () => { const g = gameOf(team, st.shown, st.ev?.id); return g ? { gameId: g.id, eventId: team.league === "milb" ? undefined : st.ev?.id, teams: [g.away.abbreviation, g.home.abbreviation], label: `${g.away.abbreviation} at ${g.home.abbreviation}` } : null; };
+  function renderParlayPanel() {
+    const c = parlayCtx();
+    fill(parlayPanelCard, h("h3", {}, "Parlay tracker"),
+      c ? parlayPanel({ team, ...c }, parlays, setParlays) : h("p.muted", {}, "Waiting for tonight's game to show up in ESPN's schedule."),
+      h("button.x", { onclick: () => togglePanel(parlayPanelCard, false), "aria-label": "Close" }, "×"));
+  }
+  async function refreshParlays() {
+    try {
+      if (!parlays.length) { plViews = []; plOverlay.replaceChildren(); return; }
+      const g = gameOf(team, st.shown, st.ev?.id);
+      const needBox = parlays.some((p) => p.legs.some((l) => l.kind === "player")) && g && g.status !== "scheduled" && team.league !== "milb";
+      const lines = needBox ? await boxPlayers(team, st.ev?.id, true) : [];
+      const next = evaluateAll(parlays, g, lines);
+      for (const c of parlayChanges(plViews.length ? plViews : undefined, next)) {
+        if (c.kind === "cashed") { toastMsg("PARLAY CASHES", c.parlay.name); fw.show(14); void audio.play("sfx_fireworks", { gain: 0.8 }); }
+        else if (c.kind === "leg_hit") toastMsg("Parlay leg hits", `${c.leg?.label} · ${c.parlay.hits} of ${c.parlay.total}`);
+        else if (c.kind === "leg_dead") toastMsg("That leg is out", `${c.leg?.label}. On to the next one.`);
+      }
+      const changed = JSON.stringify(next) !== JSON.stringify(plViews);
+      plViews = next;
+      const card = parlayCard(plViews);
+      plOverlay.replaceChildren(...(card ? [card] : []));
+      if (changed) broadcast();
+    } catch { /* the tracker never stops the screen */ }
+  }
+  setInterval(() => void refreshParlays(), 5000);
+  void refreshParlays();
+
   // For tests and the curious: window.lite.trigger("hr"), lite.fanClub(), lite.playDay()
-  (window as any).lite = { walkup, testWalkup, setWalkups, trigger, state: st, link, fanClub, playDay, stopDay, setScene, alert: (a: Alert) => watcher.onAlert(a), LABEL, playHype, hype, music, renderK, showCloser };
+  (window as any).lite = { party, parlays: () => plViews, setParlays, walkup, testWalkup, setWalkups, trigger, state: st, link, fanClub, playDay, stopDay, setScene, alert: (a: Alert) => watcher.onAlert(a), LABEL, playHype, hype, music, renderK, showCloser };
 
   // ---------- chapters, series strip, K board, closer, hype, music (Padres extras)
   function rechapter() { st.chapters = chapters(team, st.ev?.date, st.outcome, st.elim); renderScenes(); }
