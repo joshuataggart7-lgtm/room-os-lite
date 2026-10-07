@@ -495,21 +495,93 @@
   "notes": "Looking into Petco Park from the Park at the Park lawn (resized)"
  },
  {
-  "file": "padres_hype.mp4",
-  "source": "Made for Room OS Lite by scripts/render-hype.py",
+  "file": "hype/ill_ballpark.jpg",
+  "source": "Made for Room OS Lite",
   "url": "",
-  "author": "Room OS Lite",
-  "license": "CC0 1.0",
-  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-  "notes": "Padres underdog trailer: original comic panels (scripts/comic-panels.py) with AI-generated narration and trailer effects (ElevenLabs), CC0 crowd recordings and original sounds. No music"
+  "author": "AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres trailer: Night ballpark from behind home plate. Resized to 1600x900"
  },
  {
-  "file": "hype",
+  "file": "hype/ill_crowd.jpg",
+  "source": "Made for Room OS Lite",
+  "url": "",
+  "author": "AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres trailer: Crowd waving rally towels. Resized to 1600x900"
+ },
+ {
+  "file": "hype/ill_batter.jpg",
+  "source": "Made for Room OS Lite",
+  "url": "",
+  "author": "AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres trailer: Batter silhouette mid-swing. Resized to 1600x900"
+ },
+ {
+  "file": "hype/ill_pitcher.jpg",
+  "source": "Made for Room OS Lite",
+  "url": "",
+  "author": "AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres trailer: Pitcher silhouette in a leg kick. Resized to 1600x900"
+ },
+ {
+  "file": "hype/ill_homer.jpg",
+  "source": "Made for Room OS Lite",
+  "url": "",
+  "author": "AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres trailer: Ball flying out under the lights. Resized to 1600x900"
+ },
+ {
+  "file": "hype/ill_whistle.jpg",
+  "source": "Made for Room OS Lite",
+  "url": "",
+  "author": "AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres trailer: Ship's steam whistle and smoke. Resized to 1600x900"
+ },
+ {
+  "file": "hype/ill_skyline.jpg",
+  "source": "Made for Room OS Lite",
+  "url": "",
+  "author": "AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres trailer: Stylized harbor skyline at night. Resized to 1600x900"
+ },
+ {
+  "file": "hype/ill_scoreboard.jpg",
+  "source": "Made for Room OS Lite",
+  "url": "",
+  "author": "AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres trailer: Bulb scoreboard (series numbers drawn in code on top). Resized to 1600x900"
+ },
+ {
+  "file": "hype/c_*.jpg",
   "source": "Made for Room OS Lite by scripts/comic-panels.py",
   "url": "",
   "author": "Room OS Lite",
   "license": "CC0 1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-  "notes": "Folder of original comic panels drawn in code for the Padres trailer: generic silhouettes, no real people or team marks"
+  "notes": "Padres trailer title cards, drawn in code"
+ },
+ {
+  "file": "padres_hype.mp4",
+  "source": "Made for Room OS Lite by scripts/render-hype.py",
+  "url": "",
+  "author": "Room OS Lite; illustrations: AI-generated illustration (Grok Bot), original artwork",
+  "license": "Original artwork, no third-party material",
+  "licenseUrl": "",
+  "notes": "Padres underdog trailer: AI-generated illustrations (Grok Bot) with code-drawn title cards, AI-generated narration and trailer effects (ElevenLabs), CC0 crowd recordings and original sounds. No music"
  }
 ]

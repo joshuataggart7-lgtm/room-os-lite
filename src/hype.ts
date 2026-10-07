@@ -15,7 +15,7 @@ type Fx = { fx?: string; flash?: boolean; shake?: boolean; dim?: boolean };
 type Step = ({ shot: string; secs: number } | { card: string; kicker?: string; secs: number; hot?: boolean }) & Fx;
 export interface HypeAudio { at: number; s: string; gain?: number; duck?: boolean; direct?: boolean }
 
-// Baseball-only comic panels (scripts/comic-panels.py; AI illustrations can replace them at the same names).
+// Baseball-only scenes: AI-generated illustrations (Grok Bot), imported by scripts/import-art.py.
 const PADRES_SHOTS = ["hype/ill_ballpark.jpg", "hype/ill_crowd.jpg", "hype/ill_batter.jpg", "hype/ill_pitcher.jpg", "hype/ill_homer.jpg", "hype/ill_scoreboard.jpg", "hype/ill_skyline.jpg", "hype/ill_whistle.jpg"];
 const MSU_SHOTS = ["hsv_skyline.jpg", "road_i22_ms25.jpg", "road_starkville_sign.jpg", "msu_daviswade_pd.jpg", "msu_exterior_2024.jpg", "msu_expansion.jpg", "msu_game_2024.jpg", "msu_eggbowl_2009.jpg", "msu_halftime_2009.jpg", "v_stadium_crowd_night.mp4", "v_crowd_stands.mp4", "v_fireworks_crowd.mp4"];
 

@@ -5,7 +5,7 @@ These are stand-ins until AI illustrations land at the same file names (public/m
 Usage: comic-panels.py [outdir]"""
 import math, os, random, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageChops
-OUT = sys.argv[1] if __name__ == "__main__" and len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "../public/media/hype")
+OUT = sys.argv[1] if __name__ == "__main__" and len(sys.argv) > 1 and not sys.argv[1].startswith("--") else os.path.join(os.path.dirname(__file__), "../public/media/hype")
 os.makedirs(OUT, exist_ok=True)
 W, H = 1600, 900
 G = "/usr/share/fonts/truetype/sand-box/google"
@@ -282,7 +282,8 @@ def card(title, kicker="", hot=False, sub=""):
     return vignette(im, 0.3)
 
 if __name__ == "__main__":
-    for name, fn in (("ill_ballpark", ballpark), ("ill_crowd", crowd), ("ill_batter", batter), ("ill_pitcher", pitcher), ("ill_homer", homer), ("ill_whistle", whistle), ("ill_skyline", skyline), ("ill_scoreboard", scoreboard)):
+    # Scenes are AI illustrations now (scripts/import-art.py); --scenes redraws the code-drawn stand-ins.
+    for name, fn in [] if "--scenes" not in sys.argv else (("ill_ballpark", ballpark), ("ill_crowd", crowd), ("ill_batter", batter), ("ill_pitcher", pitcher), ("ill_homer", homer), ("ill_whistle", whistle), ("ill_skyline", skyline), ("ill_scoreboard", scoreboard)):
         save(fn(), name)
     for name, args in (("c_02", ("0-2", "DOWN IN THE SERIES")), ("c_g1", ("MIL 3  SD 2", "GAME 1")), ("c_g2", ("MIL 4  SD 3", "GAME 2")), ("c_out", ("COUNTED OUT", "EVERYBODY SAID")),
                        ("c_g3", ("SD 4  MIL 3", "GAME 3 · PETCO PARK", False, "STILL ALIVE")), ("c_odds", ("NOBODY BELIEVES", "ALL THE ODDS AGAINST THEM")), ("c_goose", ("GOOSE",)), ("c_peter", ("PETER",)),

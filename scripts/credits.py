@@ -1,20 +1,27 @@
 #!/usr/bin/env python3
 """Builds src/credits.json and public/LICENSES.md from the Room OS media/LICENSES.md, for only the files Lite ships."""
-import json, os, re, sys
+import fnmatch, json, os, re, sys
 SRC = os.environ.get("SRC", "/workspace/stadium-room-v3")
 here = os.path.dirname(os.path.abspath(__file__)); root = os.path.dirname(here)
-shipped = set(os.listdir(os.path.join(root, "public/media")))
+media = os.path.join(root, "public/media")
+shipped = {f for f in os.listdir(media) if os.path.isfile(os.path.join(media, f))}
+for d in (x for x in os.listdir(media) if os.path.isdir(os.path.join(media, x))):
+    shipped |= {f"{d}/{f}" for f in os.listdir(os.path.join(media, d))}
+covered = set()
 rows = []
 lines = open(os.path.join(SRC, "media/LICENSES.md"), encoding="utf-8").readlines() + open(os.path.join(root, "sources/EXTRA_LICENSES.md"), encoding="utf-8").readlines()
 for line in lines:
     if not line.startswith("| ") or line.startswith("| File") or line.startswith("|---"): continue
     cells = [c.strip() for c in line.strip().strip("|").split("|")]
-    if len(cells) < 5 or cells[0] not in shipped: continue
+    if len(cells) < 5: continue
+    hits = {f for f in shipped if fnmatch.fnmatch(f, cells[0])} if "*" in cells[0] else ({cells[0]} & shipped)
+    if not hits: continue
+    covered |= hits
     f, source, author, lic, notes = cells[:5]
     url = re.search(r"https?://\S+", source); lurl = re.search(r"\((https?://[^)]+)\)", lic)
     rows.append({"file": f, "source": source.split(":")[0], "url": url.group(0) if url else "", "author": author,
                  "license": re.sub(r"\s*\(https?://[^)]+\)", "", lic), "licenseUrl": lurl.group(1) if lurl else "", "notes": notes})
-missing = shipped - {r["file"] for r in rows}
+missing = shipped - covered
 if missing: sys.exit(f"no license row for: {sorted(missing)}")
 json.dump(rows, open(os.path.join(root, "src/credits.json"), "w"), indent=1)
 with open(os.path.join(root, "public/LICENSES.md"), "w", encoding="utf-8") as o:
