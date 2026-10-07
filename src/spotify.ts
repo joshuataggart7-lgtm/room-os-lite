@@ -87,7 +87,7 @@ export class Music {
   stop() {
     clearTimeout(this.stopT);
     this.wantPlay = false;
-    if (this.loaded) try { this.ctl?.pause(); } catch { /* */ }
+    if (this.loaded && this.playing) try { this.ctl?.pause(); } catch { /* */ }
     this.el.classList.add("hidden");
     if (this.playing) { this.playing = false; this.onDuck(false); }
     this.now = null;

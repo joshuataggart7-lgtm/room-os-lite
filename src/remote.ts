@@ -79,7 +79,7 @@ export function mountRemote(root: HTMLElement) {
       state.music ? h("a.r-music", { href: state.music.url, target: "_blank", rel: "noopener" }, h("span", {}, "Now playing on Spotify"), h("b", {}, `${state.music.title} · ${state.music.artist}`), h("em", {}, "Open in Spotify")) : null,
       !state.started ? h("div.r-note", {}, "Tap Start on the big screen once so it can play sound. ", h("button", { onclick: () => send({ t: "start" }) }, "Try from here")) : null,
       h("div.r-grid", {}, ...btns.map((b) => h(`button.r-btn${b.big ? ".big" : ""}`, { "data-k": b.k, onclick: () => send({ t: "moment", k: b.k }), style: { "--team": t.color, "--alt": t.alt } as any }, b.label))),
-      state.hype ? h("button.r-day.hype", { onclick: () => send({ t: "hype" }) }, "Hype video") : null,
+      state.hype ? h("button.r-day.r-hype", { onclick: () => send({ t: "hype" }) }, "Hype video") : null,
       h("button.r-day", { onclick: () => send({ t: "day", v: state.day ? "stop" : "go" }) }, state.day ? "Stop the full day demo" : "Play full day (demo)"),
       h("h3.r-h", {}, "Game day"),
       h("div.r-step", {}, h("button.seg", { onclick: () => send({ t: "step", v: -1 }), "aria-label": "Previous" }, "‹ Back"), h("b", {}, (state.scenes ?? []).find((x: any) => x.id === state.scene)?.label ?? ""), h("button.seg", { onclick: () => send({ t: "step", v: 1 }), "aria-label": "Next" }, "Next ›")),
