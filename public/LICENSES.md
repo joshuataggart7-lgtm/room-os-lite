@@ -75,14 +75,16 @@ CC BY-SA adaptations are shared under the same license.
 
 sfx_cowbells, sfx_cowbell_single, bed_road, sting_fanclub and sting_closer are original procedural audio from scripts/synth-lite.py (no samples). radio_hype is the Room OS line narr_hype_generic run through a radio filter.
 
-## Crowd chants and announcer lines (Oct 2026 refresh)
+## Crowd chants and announcer lines (Oct 2026 refresh, updated Oct 7, 2026)
 
-Generated with ElevenLabs for this project (prompts in scripts/gen-eleven.mjs), then given a stadium treatment by scripts/stadiumize.sh: a convolution reverb from a synthetic stadium impulse response (scripts/stadium_ir.py), the slap echo of delay towers, stereo width, and a real recorded crowd bed underneath.
-
-- AI-generated crowd chants and roars (ElevenLabs Sound Effects): chant_lets_go_padres, chant_hail_state, chant_whodat, chant_defense, chant_hotty_toddy_reply, sfx_crowd_hr, sfx_crowd_td, sfx_crowd_three, sfx_crowd_singalong, sfx_crowd_k, sfx_crowd_win, sfx_crowd_applause, sfx_crowd_closer, sfx_crowd_rise.
-- AI-generated announcer lines (ElevenLabs text to speech, eleven_v3, premade voice Brian; a generic PA voice, not any real announcer): every pa_*.mp3, plus the narration in hype_sd_trailer.mp3.
-- hype_sd_trailer.mp3 (the Padres trailer soundtrack, scripts/mix-trailer.py): ElevenLabs narration (eleven_v3, voice Brian) and ElevenLabs trailer effects (heartbeat, drums, booms, riser, crowd swell) mixed with the crowd clips above.
-- Real crowd recordings: the stands_bed_* beds and sfx_roar_* roars (see Sounds below).
+- Announcer lines (every pa_*.mp3, narr_hype_generic, radio_hype): ElevenLabs text to speech, eleven_v3, ElevenLabs Voice Library voice "David - Sports Arena Announcer" (generic stadium PA voice, not any real or famous announcer), then scripts/stadiumize.sh (PA band, convolution reverb from a synthetic stadium impulse response, delay tower slap echo, a stands bed underneath).
+- Real crowd recordings (Pixabay Content License, https://pixabay.com/service/license-summary/; free to use, no attribution required, credited anyway; not flagged as AI-generated on Pixabay):
+  - chant_lets_go_padres: "Free Crowd Cheering Sounds - 02 - Strong cheering / rhythmic cheering" by GregorQuendel, https://pixabay.com/sound-effects/people-free-crowd-cheering-sounds-02-strong-cheering-rhythmic-cheering-116190/
+  - chant_hotty_toddy_reply: "Free Crowd Cheering Sounds - 03 - Strong cheering - I" by GregorQuendel, https://pixabay.com/sound-effects/people-free-crowd-cheering-sounds-03-strong-cheering-i-116189/
+  - chant_hotty_toddy: "Free Crowd Cheering Sounds - 01 - Strong cheering / rhythmic cheering" by GregorQuendel, https://pixabay.com/sound-effects/people-free-crowd-cheering-sounds-01-strong-cheering-rhythmic-cheering-116188/
+  These are wordless crowd cheering. No licensed real recording of a "Let's go Padres" or Hotty Toddy chant was found, so the words are not faked.
+- AI-generated crowd sounds (ElevenLabs Sound Effects): chant_hail_state, chant_whodat, chant_defense, sfx_crowd_hr, sfx_crowd_td, sfx_crowd_three, sfx_crowd_singalong, sfx_crowd_k, sfx_crowd_win, sfx_crowd_applause, sfx_crowd_closer, sfx_crowd_rise, and (from Room OS) sfx_roar_*, sfx_bed_*, stands_bed_* and sfx_organ_*.
+- hype_sd_trailer.mp3 (the Padres trailer soundtrack, scripts/mix-trailer.py): ElevenLabs narration (eleven_v3, premade voice Brian) and ElevenLabs trailer effects (heartbeat, drums, booms, riser, crowd swell) mixed with crowd clips.
 
 No copyrighted music ships with Lite. Songs play only through Spotify's own embedded player.
 

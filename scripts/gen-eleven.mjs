@@ -8,7 +8,8 @@ const OUT = process.argv[2] ?? "el-raw";
 const ONLY = process.argv.slice(3);
 mkdirSync(OUT, { recursive: true });
 const API = "https://api.elevenlabs.io/v1";
-const VOICE = "nPczCjzI2devNBz1zQrb"; // ElevenLabs premade "Brian", used before for Room OS; generic, not a real announcer
+const VOICE = process.env.PA_VOICE || "DduhIyyKkOosbP8VefhP"; // PA announcer (Oct 7, 2026 audit): ElevenLabs Voice Library "David - Sports Arena Announcer"; generic, not a real or famous announcer
+const TRAILER_VOICE = "nPczCjzI2devNBz1zQrb"; // ElevenLabs premade "Brian": the Padres trailer narrator (tr_* lines), unchanged
 const live = "real live field recording from inside the stadium, huge open-air reverb, thousands of real voices";
 export const ITEMS = [
   // crowd chants and roars (sound effects)
@@ -102,8 +103,8 @@ for (const it of ITEMS) {
     let buf;
     if (it.sfx) buf = await call(`${API}/sound-generation?output_format=mp3_44100_128`, { text: it.sfx, duration_seconds: it.sec, prompt_influence: 0.6 });
     else {
-      try { buf = await call(`${API}/text-to-speech/${VOICE}?output_format=mp3_44100_128`, { text: it.tts, model_id: "eleven_v3", voice_settings: { stability: 0.0, similarity_boost: 0.8, style: 0.9, use_speaker_boost: true } }); it.model = "eleven_v3"; }
-      catch (e) { console.log("v3 failed for", it.id, String(e.message).slice(0, 120)); buf = await call(`${API}/text-to-speech/${VOICE}?output_format=mp3_44100_128`, { text: it.tts.replace(/\[[^\]]+\]\s*/g, ""), model_id: "eleven_multilingual_v2", voice_settings: { stability: 0.3, similarity_boost: 0.8, style: 0.75, use_speaker_boost: true } }); it.model = "eleven_multilingual_v2"; }
+      try { buf = await call(`${API}/text-to-speech/${it.id.startsWith("tr_") ? TRAILER_VOICE : VOICE}?output_format=mp3_44100_128`, { text: it.tts, model_id: "eleven_v3", voice_settings: { stability: 0.0, similarity_boost: 0.8, style: 0.9, use_speaker_boost: true } }); it.model = "eleven_v3"; }
+      catch (e) { console.log("v3 failed for", it.id, String(e.message).slice(0, 120)); buf = await call(`${API}/text-to-speech/${it.id.startsWith("tr_") ? TRAILER_VOICE : VOICE}?output_format=mp3_44100_128`, { text: it.tts.replace(/\[[^\]]+\]\s*/g, ""), model_id: "eleven_multilingual_v2", voice_settings: { stability: 0.3, similarity_boost: 0.8, style: 0.75, use_speaker_boost: true } }); it.model = "eleven_multilingual_v2"; }
     }
     writeFileSync(out, buf);
     console.log("ok", it.id, buf.length, it.model ?? "sfx");
