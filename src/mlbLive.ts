@@ -3,7 +3,7 @@
  * strikeouts for the K board, and who is pitching right now (so the closer entrance can fire by itself).
  */
 const API = "https://statsapi.mlb.com/api";
-export interface MlbLive { gamePk: number; ks: number; pitcherId: number; pitcherName: string; usPitching: boolean; at: number }
+export interface MlbLive { gamePk: number; ks: number; pitcherId: number; pitcherName: string; usPitching: boolean; usBatting: boolean; batterId: number; batterName: string; at: number }
 
 export class MlbTracker {
   gamePk = 0;
@@ -26,22 +26,28 @@ export class MlbTracker {
   async poll(): Promise<MlbLive | null> {
     if (!this.gamePk) return null;
     try {
-      const f = await (await fetch(`${API}/v1.1/game/${this.gamePk}/feed/live?fields=gameData,teams,home,away,id,liveData,linescore,inningHalf,defense,pitcher,fullName,boxscore,team,teamStats,pitching,strikeOuts`)).json();
+      const f = await (await fetch(`${API}/v1.1/game/${this.gamePk}/feed/live?fields=gameData,teams,home,away,id,liveData,linescore,inningHalf,inningState,defense,offense,pitcher,batter,fullName,boxscore,team,teamStats,pitching,strikeOuts`)).json();
       const home = f.gameData?.teams?.home?.id, usHome = home === this.mlbId;
       const box = f.liveData?.boxscore?.teams ?? {};
       const ks = Number((usHome ? box.home : box.away)?.teamStats?.pitching?.strikeOuts ?? 0) || 0;
       const half = f.liveData?.linescore?.inningHalf as string | undefined;
       const usPitching = usHome ? half === "Top" : half === "Bottom";
       const p = f.liveData?.linescore?.defense?.pitcher ?? {};
-      this.last = { gamePk: this.gamePk, ks, pitcherId: Number(p.id) || 0, pitcherName: String(p.fullName ?? ""), usPitching, at: Date.now() };
+      // Between half innings the offense block already names the next team's leadoff man, so only count a live half.
+      const state = f.liveData?.linescore?.inningState as string | undefined;
+      const usBatting = (state === "Top" || state === "Bottom") && (usHome ? half === "Bottom" : half === "Top");
+      const b = f.liveData?.linescore?.offense?.batter ?? {};
+      this.last = { gamePk: this.gamePk, ks, pitcherId: Number(p.id) || 0, pitcherName: String(p.fullName ?? ""), usPitching, usBatting, batterId: Number(b.id) || 0, batterName: String(b.fullName ?? ""), at: Date.now() };
       this.onUpdate(this.last);
       return this.last;
     } catch { return null; }
   }
 
+  /** Polls faster while walk-up songs are on, so the song lands as the hitter walks up. */
+  fast = false;
   run(live: () => boolean) {
     clearTimeout(this.timer);
-    const tick = async () => { if (live()) await this.poll(); this.timer = window.setTimeout(tick, live() ? 15000 : 60000); };
+    const tick = async () => { if (live()) await this.poll(); this.timer = window.setTimeout(tick, live() ? (this.fast ? 7000 : 15000) : 60000); };
     void tick();
   }
 }

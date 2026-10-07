@@ -5,6 +5,7 @@ import { $, add, fill, h } from "./dom";
 import { diff, findEvent, pollEvent, seriesFlag, simSnapshots, type MomentKind, type Snapshot } from "./espn";
 import { HypePlayer, hypePlan } from "./hype";
 import { MlbTracker, PADRES_CLOSER, type MlbLive } from "./mlbLive";
+import { loadWalkups, saveWalkups, songFor, walkupPanel, hitters, type Walkups } from "./walkups";
 import { LOGIN_URL, Music, openUrl } from "./spotify";
 import { Fireworks } from "./fireworks";
 import { chapters, LABEL, sceneFor, type Chapter, type Outcome, type Scene } from "./journey";
@@ -41,7 +42,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
     started: false, scene: "game" as Scene, sceneLocked: false, delay: Number(localStorage.getItem("lite.delay") ?? 0) || 0,
     vol: Number(localStorage.getItem("lite.vol") ?? 0.8), snaps: [] as Snapshot[], shown: null as Snapshot | null, ev: null as { id: string; date: string } | null,
     err: "", busy: false, queue: [] as { k: MomentKind; demo?: boolean }[], chapters: chapters(team), dayDemo: 0, located: false,
-    outcome: undefined as Outcome, elim: false, ks: 0, demoKs: 0, hypeDone: false, lastPitcher: 0,
+    outcome: undefined as Outcome, elim: false, ks: 0, demoKs: 0, hypeDone: false, lastPitcher: 0, walkups: loadWalkups() as Walkups, lastBatter: 0,
   };
   audio.volume = st.vol;
   const chap = (s: Scene) => st.chapters.find((c) => c.id === s) ?? st.chapters[st.chapters.length - 2];
@@ -64,6 +65,8 @@ export function mountScreen(root: HTMLElement, team: Team) {
   const kBoard = h("div.kboard.hidden");
   const closerEl = h("div.closer.hidden");
   const musicCard = h("div.panel.music-card.hidden");
+  const walkupCard = h("div.panel.music-card.walkup-card.hidden");
+  const nowBat = h("div.nowbat.hidden");
   const music = new Music();
   const hype = new HypePlayer();
   const P = team.set === "padres";
@@ -77,7 +80,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
       h("button.start-btn", { onclick: () => start() }, "Tap to start"),
       h("p.start-hint", {}, "Turn the sound up. On iPhone or iPad, switch off silent mode."),
     ));
-  const screen = h("div.screen", { "data-set": team.set, style: { "--team": team.color, "--alt": team.alt } as any }, reel.el, tod, fw.canvas, flash, h("div.scrim"), brand, seriesStrip, kBoard, chapterCard, bug, lower, jumbo, closerEl, toast, dayBar, music.el, pairChip, pairCard, playersCard, musicCard, dock, hype.el, egg, startCover);
+  const screen = h("div.screen", { "data-set": team.set, style: { "--team": team.color, "--alt": team.alt } as any }, reel.el, tod, fw.canvas, flash, h("div.scrim"), brand, seriesStrip, kBoard, chapterCard, bug, lower, jumbo, closerEl, nowBat, toast, dayBar, music.el, pairChip, pairCard, playersCard, musicCard, walkupCard, dock, hype.el, egg, startCover);
   root.replaceChildren(screen);
 
   // ---------- controls
@@ -99,6 +102,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
     h("label.dock-slider", {}, h("span", {}, "TV delay"), delay, delayLbl),
     h("button.dock-btn", { onclick: () => togglePanel(playersCard) }, "My players"),
     h("button.dock-btn", { onclick: () => togglePanel(musicCard) }, "Music"),
+    P && team.mlbId ? h("button.dock-btn", { onclick: () => { renderWalkupCard(); togglePanel(walkupCard); } }, "Walk-up songs") : null,
     h("button.dock-btn", { onclick: () => togglePanel(pairCard) }, "Phone remote"),
     document.fullscreenEnabled || (document as any).webkitFullscreenEnabled ? h("button.dock-btn", { onclick: () => fullscreen(true) }, "Full screen") : null,
     h("a.dock-btn", { href: "#/" }, "Change team"),
@@ -141,7 +145,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
 
   // Idle: hide the dock and cursor after a few seconds without input.
   let idle = 0;
-  const panelsOpen = () => !pairCard.classList.contains("hidden") || !playersCard.classList.contains("hidden") || !musicCard.classList.contains("hidden");
+  const panelsOpen = () => !pairCard.classList.contains("hidden") || !playersCard.classList.contains("hidden") || !musicCard.classList.contains("hidden") || !walkupCard.classList.contains("hidden");
   const wake = () => { screen.classList.remove("idle"); clearTimeout(idle); idle = window.setTimeout(() => { if (!panelsOpen()) screen.classList.add("idle"); }, 4500); };
   ["mousemove", "touchstart", "keydown", "click"].forEach((e) => window.addEventListener(e, wake, { passive: true }));
   wake();
@@ -407,7 +411,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
   }
   function togglePanel(p: HTMLElement, on?: boolean) {
     const show = on ?? p.classList.contains("hidden");
-    [pairCard, playersCard, musicCard].forEach((x) => x.classList.toggle("hidden", x === p ? !show : true));
+    [pairCard, playersCard, musicCard, walkupCard].forEach((x) => x.classList.toggle("hidden", x === p ? !show : true));
     wake();
   }
   link.onStatus = () => renderPair();
@@ -425,6 +429,8 @@ export function mountScreen(root: HTMLElement, team: Team) {
     else if (m.t === "players" && Array.isArray(m.v)) { setPlayers(m.v); toastMsg("My Players updated", `${m.v.length} on the list`); }
     else if (m.t === "start") start();
     else if (m.t === "hello") broadcast();
+    else if (m.t === "walkups" && m.v && typeof m.v === "object") { setWalkups(m.v as Walkups); renderWalkupCard(); toastMsg("Walk-up songs", st.walkups.on ? `On for ${Object.keys(st.walkups.picks).length} hitters` : "Off"); }
+    else if (m.t === "walkupTest" && Number(m.id)) void testWalkup(Number(m.id));
   };
   renderPair();
   link.start();
@@ -435,14 +441,14 @@ export function mountScreen(root: HTMLElement, team: Team) {
     link.send({
       t: "state", team: { key: team.key, name: team.name, fullName: team.fullName, abbr: team.abbr, color: team.color, alt: team.alt, logo: team.logo, league: team.league, set: team.set },
       started: st.started, scene: st.scene, scenes: st.chapters.map((c) => ({ id: c.id, label: c.label })), vol: st.vol, delay: st.delay, day: !!st.dayDemo && !dayBar.classList.contains("hidden"), players,
-      hype: !!hypePlan(team, null), music: music.now ? { title: music.now.title, artist: music.now.artist, url: openUrl(music.now) } : null, musicOn: music.enabled,
+      hype: !!hypePlan(team, null), mlbId: P ? team.mlbId : 0, walkups: st.walkups, music: music.now ? { title: music.now.title, artist: music.now.artist, url: openUrl(music.now) } : null, musicOn: music.enabled,
       series: s?.series ? { text: [s.series.note, s.series.summary].filter(Boolean).join(" · "), flag: seriesFlag(s.series) } : null,
       score: s ? { state: s.state, detail: s.state === "pre" ? fmtTime(s.date) : s.detail, us: [s.us.abbr, s.us.score], them: [s.them.abbr, s.them.score] } : null,
     });
   }
 
   // For tests and the curious: window.lite.trigger("hr"), lite.fanClub(), lite.playDay()
-  (window as any).lite = { trigger, state: st, link, fanClub, playDay, stopDay, setScene, alert: (a: Alert) => watcher.onAlert(a), LABEL, playHype, hype, music, renderK, showCloser };
+  (window as any).lite = { walkup, testWalkup, setWalkups, trigger, state: st, link, fanClub, playDay, stopDay, setScene, alert: (a: Alert) => watcher.onAlert(a), LABEL, playHype, hype, music, renderK, showCloser };
 
   // ---------- chapters, series strip, K board, closer, hype, music (Padres extras)
   function rechapter() { st.chapters = chapters(team, st.ev?.date, st.outcome, st.elim); renderScenes(); }
@@ -474,12 +480,18 @@ export function mountScreen(root: HTMLElement, team: Team) {
     const plan = hypePlan(team, st.shown);
     if (!plan) return;
     togglePanel(pairCard, false);
-    plan.audio.forEach((a) => void audio.play(a.s, { at: a.at, gain: a.gain, duck: a.duck }));
+
+    void (async () => {
+      // Load the trailer soundtrack first so picture and sound start together.
+      await Promise.all(plan.audio.filter((a) => a.direct).map((a) => audio.loadNow(a.s)));
+      const t0 = performance.now();
+      plan.audio.forEach((a) => void audio.play(a.s, { at: a.at, gain: a.gain, duck: a.duck, direct: a.direct, tag: a.direct ? "hype" : undefined }));
+      void hype.play(plan, P ? `${import.meta.env.BASE_URL}media/padres_hype.mp4` : undefined, t0);
+    })();
     if (music.enabled) void music.play(P ? { uri: "spotify:track:1LsiaD8GLyIuXtqeEPO5sg", title: "Hells Bells", artist: "AC/DC" } : { uri: "spotify:track:3uQyUElOQBj8aZ1KoQgusc", title: "Go State / Hail State", artist: "Mississippi State University Bands" }, plan.steps.reduce((a, x) => a + x.secs, 0));
     link.send({ t: "moment", k: "hype", title: "Hype video" });
-    void hype.play(plan, P ? `${import.meta.env.BASE_URL}media/padres_hype.mp4` : undefined);
   }
-  hype.onEnd = () => { music.stop(); broadcast(); };
+  hype.onEnd = () => { audio.stopTag("hype"); music.stop(); broadcast(); };
   music.onDuck = (on) => audio.musicDuck(on);
   music.onChange = () => { renderMusicCard(); broadcast(); };
   function renderMusicCard() {
@@ -494,12 +506,40 @@ export function mountScreen(root: HTMLElement, team: Team) {
       h("button.x", { onclick: () => togglePanel(musicCard, false), "aria-label": "Close" }, "×"));
   }
   renderMusicCard();
+
+  // ---------- walk-up songs (opt-in)
+  function setWalkups(w: Walkups) { st.walkups = { on: !!w.on, picks: w.picks ?? {} }; saveWalkups(st.walkups); if (tracker) tracker.fast = st.walkups.on; broadcast(); }
+  function renderWalkupCard() {
+    if (!P || !team.mlbId) return;
+    fill(walkupCard, h("h3", {}, "Walk-up songs"),
+      walkupPanel(team.mlbId, st.walkups, setWalkups, (x) => void testWalkup(x.id)),
+      h("button.x", { onclick: () => togglePanel(walkupCard, false), "aria-label": "Close" }, "×"));
+  }
+  let nowBatT = 0;
+  async function walkup(id: number, name: string, demo = false) {
+    const song = songFor(st.walkups, id);
+    const who = (await hitters(team.mlbId!)).find((x) => x.id === id);
+    fill(nowBat, h("div.nb-kicker", {}, demo ? "Now batting  ·  Test" : "Now batting"),
+      h("div.nb-name", {}, who?.num ? h("span.nb-num", {}, `#${who.num}`) : null, (who?.name ?? name).toUpperCase()),
+      song ? h("div.nb-song", {}, `♪ ${song.title}${song.artist ? ` · ${song.artist}` : ""}`) : null);
+    nowBat.classList.remove("hidden"); void nowBat.offsetWidth; nowBat.classList.add("show");
+    clearTimeout(nowBatT); nowBatT = window.setTimeout(() => { nowBat.classList.remove("show"); setTimeout(() => nowBat.classList.add("hidden"), 600); }, 11000);
+    if (song && music.enabled && !hype.playing) void music.play(song, 15);
+    link.send({ t: "moment", k: "walkup", title: `Now batting: ${who?.name ?? name}` });
+  }
+  async function testWalkup(id: number) { if (!st.started) start(); togglePanel(walkupCard, false); await walkup(id, "", true); }
+
   const tracker = team.mlbId ? new MlbTracker(team.mlbId) : null;
+  if (tracker) tracker.fast = st.walkups.on;
   if (tracker) {
     tracker.onUpdate = (x: MlbLive) => setTimeout(() => {
       st.ks = x.ks; renderK();
       if (P && x.usPitching && x.pitcherId === PADRES_CLOSER.id && st.lastPitcher && st.lastPitcher !== PADRES_CLOSER.id) trigger("closer");
       st.lastPitcher = x.usPitching ? x.pitcherId : st.lastPitcher;
+      if (P && x.usBatting && x.batterId && x.batterId !== st.lastBatter) {
+        if (st.walkups.on && st.walkups.picks[String(x.batterId)]) void walkup(x.batterId, x.batterName);
+        st.lastBatter = x.batterId;
+      }
     }, st.delay * 1000);
     tracker.run(() => st.shown?.state === "in");
   }

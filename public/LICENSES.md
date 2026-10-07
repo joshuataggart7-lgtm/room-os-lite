@@ -60,7 +60,8 @@ CC BY-SA adaptations are shared under the same license.
 | sd_gaslamp_street.jpg | https://commons.wikimedia.org/wiki/File:San_Diego_(California,_USA),_Embarcadero_--_2012_--_5405.jpg | Dietmar Rabich | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Street scene with the Gaslamp Quarter arch and pedestrians (resized) |
 | petco_park_at_the_park.jpg | https://commons.wikimedia.org/wiki/File:PATP_Angels_13August2018.jpg | RightCowLeftCoast | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Fans on the lawn at the Park at the Park, Petco Park, game day 2018 (resized) |
 | petco_looking_in.jpg | https://commons.wikimedia.org/wiki/File:Petco_Park_looking_in.JPG | Captain-tucker | CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0 | Looking into Petco Park from the Park at the Park lawn (resized) |
-| padres_hype.mp4 |  | Room OS Lite, from the photos and clips credited on this page | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Padres hype video, a cut of the San Diego and Petco Park photos and clips credited here (their authors keep credit). Audio is the AI-generated announcer and crowd clips plus a CC0 crowd bed. No music |
+| padres_hype.mp4 |  | Room OS Lite | CC0 1.0 https://creativecommons.org/publicdomain/zero/1.0/ | Padres underdog trailer: original comic panels (scripts/comic-panels.py) with AI-generated narration and trailer effects (ElevenLabs), CC0 crowd recordings and original sounds. No music |
+| hype |  | Room OS Lite | CC0 1.0 https://creativecommons.org/publicdomain/zero/1.0/ | Folder of original comic panels drawn in code for the Padres trailer: generic silhouettes, no real people or team marks |
 
 ## Sounds made for Lite
 
@@ -71,7 +72,8 @@ sfx_cowbells, sfx_cowbell_single, bed_road, sting_fanclub and sting_closer are o
 Generated with ElevenLabs for this project (prompts in scripts/gen-eleven.mjs), then given a stadium treatment by scripts/stadiumize.sh: a convolution reverb from a synthetic stadium impulse response (scripts/stadium_ir.py), the slap echo of delay towers, stereo width, and a real recorded crowd bed underneath.
 
 - AI-generated crowd chants and roars (ElevenLabs Sound Effects): chant_lets_go_padres, chant_hail_state, chant_whodat, chant_defense, chant_hotty_toddy_reply, sfx_crowd_hr, sfx_crowd_td, sfx_crowd_three, sfx_crowd_singalong, sfx_crowd_k, sfx_crowd_win, sfx_crowd_applause, sfx_crowd_closer, sfx_crowd_rise.
-- AI-generated announcer lines (ElevenLabs text to speech, eleven_v3, premade voice Brian; a generic PA voice, not any real announcer): every pa_*.mp3.
+- AI-generated announcer lines (ElevenLabs text to speech, eleven_v3, premade voice Brian; a generic PA voice, not any real announcer): every pa_*.mp3, plus the narration in hype_sd_trailer.mp3.
+- hype_sd_trailer.mp3 (the Padres trailer soundtrack, scripts/mix-trailer.py): ElevenLabs narration (eleven_v3, voice Brian) and ElevenLabs trailer effects (heartbeat, drums, booms, riser, crowd swell) mixed with the crowd clips above.
 - Real crowd recordings: the stands_bed_* beds and sfx_roar_* roars (see Sounds below).
 
 No copyrighted music ships with Lite. Songs play only through Spotify's own embedded player.

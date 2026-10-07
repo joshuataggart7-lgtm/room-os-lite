@@ -498,9 +498,18 @@
   "file": "padres_hype.mp4",
   "source": "Made for Room OS Lite by scripts/render-hype.py",
   "url": "",
-  "author": "Room OS Lite, from the photos and clips credited on this page",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "notes": "Padres hype video, a cut of the San Diego and Petco Park photos and clips credited here (their authors keep credit). Audio is the AI-generated announcer and crowd clips plus a CC0 crowd bed. No music"
+  "author": "Room OS Lite",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "notes": "Padres underdog trailer: original comic panels (scripts/comic-panels.py) with AI-generated narration and trailer effects (ElevenLabs), CC0 crowd recordings and original sounds. No music"
+ },
+ {
+  "file": "hype",
+  "source": "Made for Room OS Lite by scripts/comic-panels.py",
+  "url": "",
+  "author": "Room OS Lite",
+  "license": "CC0 1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "notes": "Folder of original comic panels drawn in code for the Padres trailer: generic silhouettes, no real people or team marks"
  }
 ]

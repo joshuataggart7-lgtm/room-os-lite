@@ -1,5 +1,6 @@
 /** The phone remote: enter the code from the big screen, then fire moments, switch scenes and set volume. */
 import { fill, h } from "./dom";
+import { walkupPanel } from "./walkups";
 import { RemoteLink, type Msg } from "./link";
 import { remoteButtons } from "./moments";
 import { playersPanel } from "./playersPanel";
@@ -58,8 +59,9 @@ export function mountRemote(root: HTMLElement) {
   let showPlayers = false;
   let panelEl: HTMLElement | null = null;
   let logoTaps: number[] = [];
+  let showWalkups = false, wuEl: HTMLElement | null = null;
   function render() {
-    if (panelEl && panelEl.contains(document.activeElement)) return; // don't yank the keyboard mid-search
+    if ((panelEl && panelEl.contains(document.activeElement)) || (wuEl && wuEl.contains(document.activeElement))) return; // don't yank the keyboard mid-search
     const t: Team | undefined = state?.team ? ({ ...PACKS[0], ...state.team } as Team) : undefined;
     if (!t) { view.replaceChildren(h("div.r-pair", {}, h("div.spinner"), h("p", {}, "Connected. Waiting for the screen..."))); return; }
     const sc = state.score;
@@ -86,6 +88,8 @@ export function mountRemote(root: HTMLElement) {
       h("div.r-scenes", {}, ...(state.scenes ?? []).map((s: any) => h(`button.seg${state.scene === s.id ? ".on" : ""}`, { onclick: () => send({ t: "scene", v: s.id }) }, s.label))),
       h("label.r-slider", {}, h("span", {}, "Volume"), vol),
       h("label.r-slider", {}, h("span", {}, "TV delay"), delay, dl),
+      state.mlbId ? h("button.r-players-btn", { onclick: () => { showWalkups = !showWalkups; wuEl = null; render(); } }, showWalkups ? "Hide walk-up songs" : `Walk-up songs: ${state.walkups?.on ? "on" : "off"}`) : null,
+      state.mlbId && showWalkups ? (wuEl ??= walkupPanel(state.mlbId, state.walkups ?? { on: false, picks: {} }, (w) => send({ t: "walkups", v: w }), (x) => send({ t: "walkupTest", id: x.id }))) : null,
       h("button.r-players-btn", { onclick: () => send({ t: "music", v: !state.musicOn }) }, state.musicOn ? "Spotify music: on" : "Spotify music: off"),
       h("p.r-tip", {}, "TV delay holds the crowd and score until your TV catches up. Try 30 to 45 seconds for streaming TV."),
       h("button.r-players-btn", { onclick: () => { showPlayers = !showPlayers; panelEl = null; render(); } }, showPlayers ? "Hide My Players" : `My Players (${(state.players ?? []).length})`),

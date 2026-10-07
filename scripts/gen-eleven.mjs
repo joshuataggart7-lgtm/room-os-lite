@@ -69,6 +69,25 @@ export const ITEMS = [
   { id: "pa_final", tts: "[excited] And that's a final!" },
   { id: "pa_no_cinematic_intro", tts: "[dramatic] The Superdome. The loudest house in football. [shouting] Here come your New Orleans... SAINTS!" },
   { id: "pa_hype_generic", tts: "[dramatic] Tonight... the lights are on. The crowd is in. [shouting] It's GAME TIME!" },
+  // Padres underdog trailer (hype video). Facts from ESPN: lost Games 1 and 2 at Milwaukee (3-2, 4-3), won Game 3 at Petco 4-3.
+  { id: "tr_heartbeat", sfx: "Slow heavy cinematic heartbeat, deep low thumps, lub-dub, lub-dub, movie trailer tension, dry and close", sec: 10 },
+  { id: "tr_boom", sfx: "Massive cinematic movie trailer impact boom, deep sub bass hit with a long rumbling tail", sec: 4 },
+  { id: "tr_drum_hit", sfx: "Epic cinematic taiko war drums, one huge synchronized hit with big hall reverb", sec: 3 },
+  { id: "tr_drum_build", sfx: "Building cinematic trailer percussion, taiko drums and toms accelerating and rising to a huge climax", sec: 9 },
+  { id: "tr_riser", sfx: "Cinematic trailer riser, rising tension whoosh climbing in pitch and ending in a hard hit", sec: 5 },
+  { id: "tr_crowd_swell", sfx: `Baseball stadium crowd at night building from a nervous murmur to a deafening roar, 40,000 fans rising to their feet, ${live}`, sec: 16 },
+  { id: "tr_01", tts: "[whispers] Oh and two." },
+  { id: "tr_02", tts: "[serious] Down two games to none... in Milwaukee." },
+  { id: "tr_03", tts: "[dramatic] Everybody... counted them out." },
+  { id: "tr_04", tts: "[serious] They said it was over." },
+  { id: "tr_05", tts: "[intense] Then the Padres... came home." },
+  { id: "tr_06", tts: "[dramatic] Game three. Petco Park. [excited] Padres four... Brewers three!" },
+  { id: "tr_07", tts: "[intense] Two games to one. Still alive." },
+  { id: "tr_08", tts: "[serious] All the odds against them. [whispers] Nobody believes." },
+  { id: "tr_09", tts: "[dramatic] But Goose... Peter... and this city... [intense] need this." },
+  { id: "tr_10", tts: "[shouting] WIN... OR GO HOME!" },
+  { id: "tr_11", tts: "[intense] N L D S. Game four. Petco Park." },
+  { id: "tr_12", tts: "[shouting] LET'S... GO... PADRES!" },
 ];
 async function call(url, body) {
   const r = await fetch(url, { method: "POST", headers: { "xi-api-key": KEY, "content-type": "application/json", accept: "audio/mpeg" }, body: JSON.stringify(body) });

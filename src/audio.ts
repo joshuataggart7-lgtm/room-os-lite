@@ -76,7 +76,13 @@ export class Audio {
   }
 
   /** Plays a sound now or after `at` seconds. duck lowers the bed while it plays (announcer lines). Resolves when it ends. */
-  async play(name: string, o: { gain?: number; at?: number; duck?: boolean; pan?: number } = {}): Promise<void> {
+  private tagged = new Map<string, AudioBufferSourceNode>();
+  /** Loads a sound without playing it, so a long cue can start exactly on time. */
+  async loadNow(name: string) { if (this.ctx) await this.load(name); }
+  /** Stops a sound started with a tag (the hype trailer when someone hits Skip). */
+  stopTag(tag: string) { try { this.tagged.get(tag)?.stop(); } catch { /* already ended */ } this.tagged.delete(tag); }
+  /** direct skips the music duck bus (the trailer's narration must stay full level over Spotify). */
+  async play(name: string, o: { gain?: number; at?: number; duck?: boolean; pan?: number; direct?: boolean; tag?: string } = {}): Promise<void> {
     if (!this.ctx) return;
     const buf = await this.load(name);
     if (!buf || !this.ctx) return;
@@ -87,7 +93,8 @@ export class Audio {
     g.gain.value = o.gain ?? 1;
     let node: AudioNode = g;
     if (o.pan && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = o.pan; g.connect(p); node = p; }
-    s.connect(g); node.connect(this.bus);
+    s.connect(g); node.connect(o.direct ? this.master : this.bus);
+    if (o.tag) { this.stopTag(o.tag); this.tagged.set(o.tag, s); }
     const start = ctx.currentTime + (o.at ?? 0);
     s.start(start);
     if (o.duck) {
