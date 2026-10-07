@@ -1,0 +1,69 @@
+name: Publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      bundle_url:
+        description: "Optional: URL of a git bundle with new commits for main"
+        required: false
+      bundle_sha256:
+        description: "SHA-256 of that bundle"
+        required: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Import bundle into main
+        if: ${{ inputs.bundle_url != '' }}
+        env:
+          URL: ${{ inputs.bundle_url }}
+          SUM: ${{ inputs.bundle_sha256 }}
+        run: |
+          curl -fsSL --retry 3 -o /tmp/site.bundle "$URL"
+          echo "$SUM  /tmp/site.bundle" | sha256sum -c -
+          git bundle verify /tmp/site.bundle
+          git fetch /tmp/site.bundle main:imported
+          git merge --ff-only imported
+          git push origin HEAD:main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+          touch dist/.nojekyll
+
+      - name: Push site to gh-pages
+        run: |
+          cd dist
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "Site from ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages
+
+      - name: Try to switch on Pages
+        continue-on-error: true
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
