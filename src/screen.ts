@@ -481,6 +481,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
     if (!plan) return;
     togglePanel(pairCard, false);
 
+    hype.prep();
     void (async () => {
       // Load the trailer soundtrack first so picture and sound start together.
       await Promise.all(plan.audio.filter((a) => a.direct).map((a) => audio.loadNow(a.s)));

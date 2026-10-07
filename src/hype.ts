@@ -79,6 +79,12 @@ export class HypePlayer {
   constructor() {
     this.el.append(this.stage, this.flash, h("div.hype-bar", {}, this.bar), h("button.hype-x", { onclick: () => this.stop() }, "Skip"), this.dl);
   }
+  /** Black screen with a "Loading" card while the soundtrack loads, so the click feels instant. */
+  prep() {
+    this.run++;
+    this.stage.replaceChildren(h("div.hype-card", {}, h("div.hc-kicker", {}, "Padres"), h("div.hc-title", {}, "LOADING..."), h("div.hc-scan")));
+    this.el.classList.remove("hidden");
+  }
   async play(plan: { steps: Step[] }, mp4?: string, t0 = performance.now()) {
     this.dl.classList.toggle("hidden", !mp4);
     if (mp4) (this.dl as HTMLAnchorElement).href = mp4;
