@@ -8,6 +8,8 @@ type Ctx = AudioContext;
 export class Audio {
   ctx: Ctx | null = null;
   private master!: GainNode;
+  private bus!: GainNode;
+  private musicOn = false;
   private bedGain!: GainNode;
   private bedSrc: AudioBufferSourceNode | null = null;
   private bedName = "";
@@ -24,9 +26,13 @@ export class Audio {
       this.master = this.ctx.createGain();
       this.master.gain.value = this.volume;
       this.master.connect(this.ctx.destination);
+      // Everything we play goes through one bus so Spotify music can duck the whole crowd under it.
+      this.bus = this.ctx.createGain();
+      this.bus.gain.value = this.musicOn ? 0.3 : 1;
+      this.bus.connect(this.master);
       this.bedGain = this.ctx.createGain();
       this.bedGain.gain.value = 0;
-      this.bedGain.connect(this.master);
+      this.bedGain.connect(this.bus);
       // A silent blip in the same tap wakes iOS audio.
       const b = this.ctx.createBuffer(1, 1, 22050), s = this.ctx.createBufferSource();
       s.buffer = b; s.connect(this.master); s.start(0);
@@ -81,7 +87,7 @@ export class Audio {
     g.gain.value = o.gain ?? 1;
     let node: AudioNode = g;
     if (o.pan && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = o.pan; g.connect(p); node = p; }
-    s.connect(g); node.connect(this.master);
+    s.connect(g); node.connect(this.bus);
     const start = ctx.currentTime + (o.at ?? 0);
     s.start(start);
     if (o.duck) {
@@ -89,6 +95,12 @@ export class Audio {
       s.onended = () => this.duck(false);
     }
     return new Promise((res) => { const t = setTimeout(res, ((o.at ?? 0) + buf.duration) * 1000 + 50); s.addEventListener("ended", () => { clearTimeout(t); res(); }); });
+  }
+
+  /** Spotify music is playing: sit the crowd and effects underneath it. */
+  musicDuck(on: boolean) {
+    this.musicOn = on;
+    if (this.ctx) this.bus.gain.setTargetAtTime(on ? 0.3 : 1, this.ctx.currentTime, on ? 0.3 : 0.8);
   }
 
   private duck(on: boolean) {

@@ -10,47 +10,33 @@
  },
  "sets": {
   "padres": {
-   "arrival": [
-    {
-     "src": "s_sd_dusk_coronado.jpg",
-     "secs": 18,
-     "kb": "in"
-    }
-   ],
    "tailgate": [
     {
-     "src": "s_petco_behind_plate_upper.jpg",
+     "src": "petco_park_at_the_park.jpg",
+     "secs": 15,
+     "kb": "in",
      "fx": [
-      "haze",
       "shimmer"
-     ],
-     "crowd": [
-      [
-       0,
-       40,
-       14,
-       60
-      ],
-      [
-       86,
-       40,
-       14,
-       60
-      ],
-      [
-       0,
-       82,
-       100,
-       18
-      ]
-     ],
-     "secs": 22,
-     "kb": "in"
+     ]
     },
     {
-     "src": "s_sd_dusk_coronado.jpg",
-     "secs": 16,
-     "kb": "in"
+     "src": "petco_looking_in.jpg",
+     "secs": 14,
+     "kb": "left"
+    },
+    {
+     "src": "sd_gaslamp_street.jpg",
+     "secs": 12,
+     "kb": "right"
+    },
+    {
+     "src": "s_petco_section_135_panorama.jpg",
+     "secs": 14,
+     "kb": "left"
+    },
+    {
+     "src": "v_sd_dusk_city.mp4",
+     "secs": 9
     }
    ],
    "walkIn": [
@@ -79,44 +65,16 @@
      "kb": "in"
     },
     {
-     "src": "s_petco_night_behind_plate.jpg",
+     "src": "s_petco_panorama.jpg",
+     "secs": 16,
+     "kb": "left",
      "fx": [
-      "haze",
-      "flicker",
-      "shimmer"
-     ],
-     "crowd": [
-      [
-       72,
-       35,
-       28,
-       65
-      ],
-      [
-       0,
-       45,
-       12,
-       50
-      ],
-      [
-       0,
-       24,
-       42,
-       12
-      ],
-      [
-       58,
-       20,
-       42,
-       14
-      ]
-     ],
-     "secs": 22,
-     "kb": "out"
+      "haze"
+     ]
     },
     {
      "src": "v_ballpark_aerial_night.mp4",
-     "secs": 10
+     "secs": 9
     },
     {
      "src": "s_petco_night_lower_level.jpg",
@@ -139,11 +97,12 @@
        20
       ]
      ],
-     "secs": 20,
-     "kb": "in"
+     "secs": 22,
+     "kb": "left"
     },
     {
-     "src": "v_crowd_stands.mp4"
+     "src": "v_crowd_stands.mp4",
+     "secs": 8
     }
    ],
    "game": [
@@ -292,6 +251,104 @@
      ],
      "secs": 20,
      "kb": "out"
+    }
+   ],
+   "morning": [
+    {
+     "src": "sd_bay_morning.jpg",
+     "secs": 16,
+     "kb": "left",
+     "grade": "saturate(1.1) brightness(1.02)"
+    },
+    {
+     "src": "sd_gaslamp_arch_day.jpg",
+     "secs": 14,
+     "kb": "in"
+    },
+    {
+     "src": "sd_gaslamp_street.jpg",
+     "secs": 12,
+     "kb": "right"
+    }
+   ],
+   "seats": [
+    {
+     "src": "s_petco_night_behind_plate.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       72,
+       35,
+       28,
+       65
+      ],
+      [
+       0,
+       45,
+       12,
+       50
+      ],
+      [
+       0,
+       24,
+       42,
+       12
+      ],
+      [
+       58,
+       20,
+       42,
+       14
+      ]
+     ],
+     "secs": 20,
+     "kb": "out"
+    },
+    {
+     "src": "v_baseball_seats_night.mp4",
+     "secs": 9
+    },
+    {
+     "src": "s_petco_night_low.jpg",
+     "fx": [
+      "haze",
+      "flicker",
+      "shimmer"
+     ],
+     "crowd": [
+      [
+       0,
+       77,
+       100,
+       10
+      ],
+      [
+       0,
+       60,
+       35,
+       10
+      ]
+     ],
+     "secs": 18,
+     "kb": "right"
+    }
+   ],
+   "postLoss": [
+    {
+     "src": "s_sd_night_bay.jpg",
+     "secs": 18,
+     "kb": "left",
+     "grade": "saturate(0.8) brightness(0.9)"
+    },
+    {
+     "src": "s_sd_night_pointloma.jpg",
+     "secs": 18,
+     "kb": "in",
+     "grade": "saturate(0.8) brightness(0.9)"
     }
    ]
   },

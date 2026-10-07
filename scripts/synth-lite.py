@@ -66,6 +66,22 @@ def trombone():
     return np.stack([x, x], axis=1)
 
 os.makedirs(OUT, exist_ok=True)
+def closer_sting():
+    """Lights out: a breaker clunk, a sub drone that swells, and three heavy hits. Original, not any song."""
+    secs = 7.0; t = np.arange(int(SR * secs)) / SR; x = np.zeros_like(t)
+    rng = np.random.default_rng(3)
+    clunk = rng.standard_normal(int(SR * 0.08)) * np.exp(-np.arange(int(SR * 0.08)) / (SR * 0.015)); x[:len(clunk)] += clunk * 0.9
+    drone = (np.sin(2 * np.pi * 41 * t) + 0.5 * np.sin(2 * np.pi * 61.7 * t) + 0.25 * np.sin(2 * np.pi * 82 * t * (1 + 0.002 * np.sin(2 * np.pi * 0.3 * t))))
+    env = np.clip((t - 0.2) / 4.5, 0, 1) ** 1.6 * np.clip((secs - t) / 0.6, 0, 1)
+    x += drone * env * 0.45
+    for k, at in enumerate((4.6, 5.3, 6.0)):
+        i = int(at * SR); n = int(SR * 0.9); tt = np.arange(n) / SR
+        hit = (np.sin(2 * np.pi * (55 - 25 * tt) * tt) * np.exp(-tt / 0.35) + rng.standard_normal(n) * np.exp(-tt / 0.05) * 0.4) * (0.8 + 0.1 * k)
+        x[i:i + n] += hit[: len(x) - i]
+    x = np.tanh(x * 1.4) * 0.8
+    return np.stack([x, np.roll(x, 90)], axis=1)
+
+write("sting_closer", closer_sting())
 write("sfx_cowbells", cowbells(7, 60))
 write("sfx_cowbell_single", cowbells(2.2, 3, (6, 9)))
 write("bed_road", road(30), "64k")

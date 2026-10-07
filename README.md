@@ -29,3 +29,11 @@ Media in `public/media` and `public/sounds` is already processed and committed. 
 ## Credits
 
 Every photo and clip is listed on the in-app Credits page and in `public/LICENSES.md`, with author and license. Sounds made for Lite (cowbells, road hum, the sting) were synthesized from scratch. Team names and logos belong to their owners; this is an unofficial fan project. Scores are from ESPN and MLB public endpoints and are not affiliated with or endorsed by them.
+
+## Padres game day
+
+Direct link: https://joshuataggart7-lgtm.github.io/room-os-lite/#/padres (or `?team=padres`). Straight to the big screen: `#/screen?t=padres`.
+
+Six phases (Morning in San Diego, Park at the Park pregame, the walk in, behind the plate, the game, postgame), live ESPN series strip (WIN OR GO HOME only when the series data says so), strikeout K board, ship's whistle home runs, 7th inning stretch, 8th inning singalong, closer entrance banner, hype video (`public/media/padres_hype.mp4` is the downloadable cut, rendered by `scripts/render-hype.py` with no music). Songs play only through Spotify's embedded player (`src/spotify.ts`, every track ID checked against open.spotify.com).
+
+Audio: `scripts/gen-eleven.mjs` renders chants and announcer lines with ElevenLabs once, offline (key from the environment, never stored), and `scripts/stadiumize.sh` adds stadium reverb and a real crowd bed. Nothing calls ElevenLabs at runtime.

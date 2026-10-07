@@ -12,6 +12,9 @@ import { mountScreen } from "./screen";
 import { resolveTeam } from "./teams";
 
 const root = document.getElementById("app")!;
+// Share links like ?team=padres land on the Padres page.
+const qTeam = new URLSearchParams(location.search).get("team");
+if (qTeam && !location.hash) location.hash = `#/${qTeam.toLowerCase() === "sd" ? "padres" : qTeam.toLowerCase()}`;
 let current = "";
 
 async function route() {
@@ -30,9 +33,10 @@ async function route() {
     mountScreen(root, team);
   } else if (path === "/remote") { document.title = "Remote · Room OS Lite"; mountRemote(root); }
   else if (path === "/credits") { document.title = "Credits · Room OS Lite"; mountCredits(root); }
-  else if (["/sd", "/padres"].includes(path)) location.hash = "#/screen?t=sd";
-  else if (["/saints", "/no"].includes(path)) location.hash = "#/screen?t=no";
-  else if (["/olemiss", "/miss"].includes(path)) location.hash = "#/screen?t=miss";
+  else if (["/sd", "/padres"].includes(path)) { document.title = "Padres · Room OS Lite"; mountLanding(root, "sd"); }
+  else if (["/saints", "/no"].includes(path)) mountLanding(root, "no");
+  else if (["/olemiss", "/miss"].includes(path)) mountLanding(root, "miss");
+  else if (["/msu", "/state"].includes(path)) mountLanding(root, "msu");
   else { document.title = "Room OS Lite"; mountLanding(root); }
 }
 window.addEventListener("hashchange", () => void route());

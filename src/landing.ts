@@ -4,7 +4,7 @@ import { LEAGUE_NAME, PACKS, teamList, type League, type Team } from "./teams";
 
 const base = import.meta.env.BASE_URL;
 
-export function mountLanding(root: HTMLElement) {
+export function mountLanding(root: HTMLElement, preKey?: string) {
   let team: Team | null = null;
   const step2 = h("section.step.step2.hidden");
   const picked = h("div.picked");
@@ -85,7 +85,7 @@ export function mountLanding(root: HTMLElement) {
     )));
   others.append(h("div.seg-row", {}, ...tabs), search, list);
 
-  const saved = localStorage.getItem("lite.team");
+  const saved = preKey ?? localStorage.getItem("lite.team");
   const pre = PACKS.find((p) => p.key === saved);
   if (pre) choose(pre);
 }

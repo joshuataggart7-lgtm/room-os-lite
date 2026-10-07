@@ -5,6 +5,7 @@ CC BY-SA adaptations are shared under the same license.
 
 | File | Source | Author | License | Notes |
 |---|---|---|---|---|
+| v_sd_dusk_city.mp4 | https://pixabay.com/videos/city-sunset-buildings-skyscrapers-173137/ | Pixabay contributor | Pixabay Content License  | Generic city at sunset (tailgate) |
 | v_ballpark_aerial_night.mp4 | https://www.pexels.com/video/aerial-view-of-illuminated-baseball-field-35557011/ | Pexels contributor | Pexels License  | Lit ballpark from above (trimmed 2 s in) |
 | v_baseball_seats_night.mp4 | https://www.pexels.com/video/night-baseball-game-at-lit-stadium-33930361/ | Pexels contributor | Pexels License  | Night baseball from behind the plate. Cropped to the lower field so the sponsor boards are out of frame |
 | v_stadium_crowd_night.mp4 | https://www.pexels.com/video/night-football-match-in-stadium-with-cheering-crowd-34148767/ | Pexels contributor | Pexels License  | Night stadium and crowd (cropped) |
@@ -15,11 +16,15 @@ CC BY-SA adaptations are shared under the same license.
 | v_fireworks_crowd.mp4 | https://pixabay.com/videos/fireworks-display-fireworks-audience-370938/ | Pixabay contributor | Pixabay Content License  | Fireworks over a crowd |
 | v_lights_in_trees.mp4 | https://www.pexels.com/video/trees-full-of-lights-during-nighttime-6172573/ | Pexels contributor | Pexels License  | Lights in trees, warm grade baked in for the Grove |
 | s_sd_dusk_coronado.jpg | https://commons.wikimedia.org/wiki/File:San_Diego_skyline_at_dusk_from_Coronado_2015.jpg | russellstreet | CC BY-SA 2.0 https://creativecommons.org/licenses/by-sa/2.0 | San Diego skyline at dusk from Coronado (resized) |
+| s_sd_night_pointloma.jpg | https://commons.wikimedia.org/wiki/File:San_Diego_skyline_at_night_from_Point_Loma_2014.jpg | Agha Zain | CC BY 2.0 https://creativecommons.org/licenses/by/2.0 | San Diego skyline at night from Point Loma (resized) |
+| s_sd_night_bay.jpg | https://commons.wikimedia.org/wiki/File:San_Diego_Night_Time_Skyline_(cropped).jpg | ChetChang | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | San Diego skyline over the bay at night (resized) |
 | s_petco_night_behind_plate.jpg | https://commons.wikimedia.org/wiki/File:Petco_Park_(15995149477).jpg | redlegsfan21 | CC BY-SA 2.0 https://creativecommons.org/licenses/by-sa/2.0 | Petco Park at night from behind home plate, upper level. Main long-wall image (cropped to 16:9, resized) |
 | s_petco_night_lower_level.jpg | https://commons.wikimedia.org/wiki/File:Padres_at_Petco_Park.jpg | Mds08011 | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | Night game from the lower level behind the plate (cropped, resized) |
 | s_petco_night_low.jpg | https://commons.wikimedia.org/wiki/File:PetcoParkNight.jpg | Jamie Lantzy | CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0 | Night game from behind the plate netting (cropped, resized) |
 | s_petco_dusk_downtown.jpg | https://commons.wikimedia.org/wiki/File:Interior_of_Petco_Park_looking_over_Downtown_San_Diego_on_August_12,_2024.jpg | So.estrada0508 | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Dusk over the outfield and downtown skyline (walk-in wall, game ribbon; cropped, resized) |
 | s_petco_behind_plate_upper.jpg | https://commons.wikimedia.org/wiki/File:Petco_Park_Padres_Game.jpg | Mds08011 | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | Day game from upper level behind the plate, skyline and Western Metal Supply Co. building beyond (tailgate; cropped, resized) |
+| s_petco_panorama.jpg | https://commons.wikimedia.org/wiki/File:PetcoParkPan.jpg | Jamie Lantzy | CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0 | Ballpark panorama with the Western Metal building and skyline (ribbon; resized, darkened toward dusk on screen) |
+| s_petco_section_135_panorama.jpg | https://commons.wikimedia.org/wiki/File:Section_135_panoramic.jpg | RightCowLeftCoast | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Panorama from section 135 (pregame ribbon; resized) |
 | s_dome_upper_deck_wide.jpg | https://commons.wikimedia.org/wiki/File:Florida_St_Seminoles_vs_LSU_Tigers,_Superdome,_4_Sept_2022_(1).jpg | Spatms | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Superdome from the upper deck at a 2022 college game, full crowd and roof (Saints main long-wall image) (cropped, resized) |
 | s_dome_upper_sideline.jpg | https://commons.wikimedia.org/wiki/File:Florida_St_Seminoles_vs_LSU_Tigers,_Superdome,_4_Sept_2022_(2).jpg | Spatms | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Superdome upper sideline view, full crowd (cropped, resized) |
 | s_dome_mid_sideline.jpg | https://commons.wikimedia.org/wiki/File:Florida_St_Seminoles_vs_LSU_Tigers,_Superdome,_4_Sept_2022_(4).jpg | Spatms | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Superdome mid-level sideline view, full crowd (cropped, resized) |
@@ -50,10 +55,26 @@ CC BY-SA adaptations are shared under the same license.
 | road_us82_signs.jpg | https://commons.wikimedia.org/wiki/File:Control_cities_ms-12_and_us-82.jpg | RomeoEchoDelta | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | US 82 and MS 12 signs near Starkville (the drive; resized) |
 | road_ms389.jpg | https://commons.wikimedia.org/wiki/File:MS_389_North_of_Starkville.jpg | RomeoEchoDelta | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | MS 389 north of Starkville (the drive, ride home; resized) |
 | road_starkville_sign.jpg | https://commons.wikimedia.org/wiki/File:StarkvilleMSWelcomeSign.jpg | Chillin662 | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Starkville welcome sign, Home of Mississippi State University (arrival; resized) |
+| sd_bay_morning.jpg | https://commons.wikimedia.org/wiki/File:Coronado,_CA,_USA_-_San_Diego_viewed_from_Coronado_-_panoramio_(9).jpg | MARELBU | CC BY 3.0 https://creativecommons.org/licenses/by/3.0 | Downtown San Diego across the bay from Coronado, daytime (resized) |
+| sd_gaslamp_arch_day.jpg | https://commons.wikimedia.org/wiki/File:Gaslamp_Quarter_01.jpg | Bernard Gagnon | CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0 | Gaslamp Quarter arch on Fifth Avenue, daytime (resized) |
+| sd_gaslamp_street.jpg | https://commons.wikimedia.org/wiki/File:San_Diego_(California,_USA),_Embarcadero_--_2012_--_5405.jpg | Dietmar Rabich | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Street scene with the Gaslamp Quarter arch and pedestrians (resized) |
+| petco_park_at_the_park.jpg | https://commons.wikimedia.org/wiki/File:PATP_Angels_13August2018.jpg | RightCowLeftCoast | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Fans on the lawn at the Park at the Park, Petco Park, game day 2018 (resized) |
+| petco_looking_in.jpg | https://commons.wikimedia.org/wiki/File:Petco_Park_looking_in.JPG | Captain-tucker | CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0 | Looking into Petco Park from the Park at the Park lawn (resized) |
+| padres_hype.mp4 |  | Room OS Lite, from the photos and clips credited on this page | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0 | Padres hype video, a cut of the San Diego and Petco Park photos and clips credited here (their authors keep credit). Audio is the AI-generated announcer and crowd clips plus a CC0 crowd bed. No music |
 
 ## Sounds made for Lite
 
-sfx_cowbells, sfx_cowbell_single, bed_road and sting_fanclub are original procedural audio from scripts/synth-lite.py (no samples). radio_hype is the Room OS line narr_hype_generic run through a radio filter.
+sfx_cowbells, sfx_cowbell_single, bed_road, sting_fanclub and sting_closer are original procedural audio from scripts/synth-lite.py (no samples). radio_hype is the Room OS line narr_hype_generic run through a radio filter.
+
+## Crowd chants and announcer lines (Oct 2026 refresh)
+
+Generated with ElevenLabs for this project (prompts in scripts/gen-eleven.mjs), then given a stadium treatment by scripts/stadiumize.sh: a convolution reverb from a synthetic stadium impulse response (scripts/stadium_ir.py), the slap echo of delay towers, stereo width, and a real recorded crowd bed underneath.
+
+- AI-generated crowd chants and roars (ElevenLabs Sound Effects): chant_lets_go_padres, chant_hail_state, chant_whodat, chant_defense, chant_hotty_toddy_reply, sfx_crowd_hr, sfx_crowd_td, sfx_crowd_three, sfx_crowd_singalong, sfx_crowd_k, sfx_crowd_win, sfx_crowd_applause, sfx_crowd_closer, sfx_crowd_rise.
+- AI-generated announcer lines (ElevenLabs text to speech, eleven_v3, premade voice Brian; a generic PA voice, not any real announcer): every pa_*.mp3.
+- Real crowd recordings: the stands_bed_* beds and sfx_roar_* roars (see Sounds below).
+
+No copyrighted music ships with Lite. Songs play only through Spotify's own embedded player.
 
 ## Sounds
 
@@ -105,3 +126,11 @@ v7 (Saints, Oct 7, 2026): ElevenLabs Sound Effects and TTS, 2 new generations.
   postgame light show (replaces the procedural sfx_second_line there).
   pa_no_pregame_intro: the Saints cinematic intro voice. pa_no_cinematic_intro is sfx_cinematic_swell (v6),
   that voice, sfx_roar_football and sfx_roar_huge mixed by ffmpeg (loudnorm -16 LUFS), about 22 s.
+
+v8 (Padres NLDS Game 4, Oct 7, 2026): the Padres run of show re-rendered so it sounds like a ballpark, not a robot.
+  pa_sd_pregame_intro, pa_find_seats_first_pitch, pa_sd_intro, pa_play_ball, pa_sd_home_run, pa_sd_seventh,
+  pa_sd_now_pitching, pa_sd_win, pa_fireworks: ElevenLabs text-to-speech (eleven_v3, premade library voice
+  "Adam"; generic arena style, no real announcer imitated), with an original synthetic stadium reverb
+  (scripts/stadium-pa/make-ir.py) and leveled to the clips they replace. pa_sd_cinematic_intro: the new
+  pa_sd_pregame_intro mixed with sfx_cinematic_swell and sfx_roar_baseball by ffmpeg. chant_lets_go_padres:
+  ElevenLabs Sound Effects (a stadium crowd chanting). Previous versions are in git history.

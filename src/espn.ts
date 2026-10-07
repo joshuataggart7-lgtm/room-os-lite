@@ -18,8 +18,28 @@ export interface Snapshot {
   onFirst?: boolean; onSecond?: boolean; onThird?: boolean;
   downDistance?: string; possession?: string; redZone?: boolean;
   lastPlay?: { id: string; text: string; teamId?: string };
+  inning?: number; half?: "top" | "bot" | "mid" | "end";
+  /** Playoff series straight from ESPN's competition.series and notes; absent when ESPN doesn't send it. */
+  series?: Series;
   at: number;                // when it was fetched (ms)
 }
+
+export interface Series { summary: string; note: string; usWins: number; themWins: number; needed: number; total: number; completed: boolean }
+/** Win-or-go-home is only claimed when the series numbers say so. */
+export const seriesFlag = (x?: Series): "elim" | "decider" | "clinch" | "" => {
+  if (!x || x.completed || !x.needed) return "";
+  const ue = x.themWins === x.needed - 1, ce = x.usWins === x.needed - 1;
+  return ue && ce ? "decider" : ue ? "elim" : ce ? "clinch" : "";
+};
+function seriesOf(comp: any, usId: string): Series | undefined {
+  const s = comp?.series;
+  if (!s || s.type !== "playoff" || !Array.isArray(s.competitors)) return undefined;
+  const us = s.competitors.find((c: any) => String(c.id) === usId), them = s.competitors.find((c: any) => String(c.id) !== usId);
+  if (!us || !them) return undefined;
+  const total = Number(s.totalCompetitions) || 0;
+  return { summary: String(s.summary ?? ""), note: String(comp.notes?.[0]?.headline ?? ""), usWins: Number(us.wins) || 0, themWins: Number(them.wins) || 0, needed: total ? Math.floor(total / 2) + 1 : 0, total, completed: !!s.completed };
+}
+const halfOf = (d: string): Snapshot["half"] => (/^top/i.test(d) ? "top" : /^bot/i.test(d) ? "bot" : /^mid/i.test(d) ? "mid" : /^end/i.test(d) ? "end" : undefined);
 
 const API = "https://site.api.espn.com/apis/site/v2/sports/";
 /** MLB's free Stats API (statsapi.mlb.com, CORS open): minor league games, which ESPN doesn't carry. */
@@ -77,6 +97,8 @@ function toSnapshot(team: Team, e: any, comp: any): Snapshot | null {
     balls: s.balls, strikes: s.strikes, outs: s.outs, onFirst: s.onFirst, onSecond: s.onSecond, onThird: s.onThird,
     downDistance: s.downDistanceText ?? s.shortDownDistanceText, possession: s.possession, redZone: s.isRedZone,
     lastPlay: lp ? { id: String(lp.id ?? lp.text ?? ""), text: String(lp.text ?? ""), teamId: lp.team?.id ? String(lp.team.id) : undefined } : undefined,
+    inning: Number(st.period) || undefined, half: halfOf(String(st.type?.shortDetail ?? "")),
+    series: seriesOf(comp, team.espnId),
     at: Date.now(),
   };
 }
@@ -101,7 +123,7 @@ export async function pollEvent(team: Team, ev: { id: string; date: string }): P
   return snap;
 }
 
-export type MomentKind = "hr" | "run" | "td" | "fg" | "score" | "opp" | "win" | "start" | "strikeout" | "chant" | "horn" | "defense" | "noise" | "fireworks" | "intro" | "three" | "bucket" | "cowbell";
+export type MomentKind = "stretch" | "eighth" | "closer" | "loss" | "over" | "walkout" | "hr" | "run" | "td" | "fg" | "score" | "opp" | "win" | "start" | "strikeout" | "chant" | "horn" | "defense" | "noise" | "fireworks" | "intro" | "three" | "bucket" | "cowbell";
 
 /** Moments between two snapshots of the same game, from our side's point of view. */
 export function diff(team: Team, a: Snapshot | null, b: Snapshot): MomentKind[] {
@@ -118,7 +140,14 @@ export function diff(team: Team, a: Snapshot | null, b: Snapshot): MomentKind[] 
   }
   if (dt > 0 && sport !== "basketball") out.push("opp");
   if (sport === "baseball" && du <= 0 && dt <= 0 && b.lastPlay && b.lastPlay.id !== a.lastPlay?.id && /struck out/.test(text) && b.lastPlay.teamId && b.lastPlay.teamId !== team.espnId) out.push("strikeout");
-  if (a.state !== "post" && b.state === "post" && b.us.score > b.them.score) out.push("win");
+  if (sport === "baseball" && b.state === "in" && b.half === "mid" && (a.half !== "mid" || a.inning !== b.inning)) {
+    if (b.inning === 7) out.push("stretch");
+    if (b.inning === 8 && team.set === "padres") out.push("eighth");
+  }
+  if (a.state !== "post" && b.state === "post") {
+    if (b.us.score > b.them.score) out.push("win");
+    else if (b.us.score < b.them.score) out.push(b.series?.completed || seriesFlag(a.series) === "elim" || seriesFlag(a.series) === "decider" ? "over" : "loss");
+  }
   return out;
 }
 

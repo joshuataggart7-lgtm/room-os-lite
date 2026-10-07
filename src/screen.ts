@@ -2,9 +2,12 @@
 import qrcode from "qrcode-generator";
 import { Audio } from "./audio";
 import { $, add, fill, h } from "./dom";
-import { diff, findEvent, pollEvent, simSnapshots, type MomentKind, type Snapshot } from "./espn";
+import { diff, findEvent, pollEvent, seriesFlag, simSnapshots, type MomentKind, type Snapshot } from "./espn";
+import { HypePlayer, hypePlan } from "./hype";
+import { MlbTracker, PADRES_CLOSER, type MlbLive } from "./mlbLive";
+import { LOGIN_URL, Music, openUrl } from "./spotify";
 import { Fireworks } from "./fireworks";
-import { chapters, LABEL, sceneFor, type Chapter, type Scene } from "./journey";
+import { chapters, LABEL, sceneFor, type Chapter, type Outcome, type Scene } from "./journey";
 import { ScreenLink, type Msg } from "./link";
 import { demoKind, moment, vendorsFor, welcomeFor, type Moment } from "./moments";
 import { loadPlayers, savePlayers, Watcher, type Alert, type Player } from "./players";
@@ -38,6 +41,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
     started: false, scene: "game" as Scene, sceneLocked: false, delay: Number(localStorage.getItem("lite.delay") ?? 0) || 0,
     vol: Number(localStorage.getItem("lite.vol") ?? 0.8), snaps: [] as Snapshot[], shown: null as Snapshot | null, ev: null as { id: string; date: string } | null,
     err: "", busy: false, queue: [] as { k: MomentKind; demo?: boolean }[], chapters: chapters(team), dayDemo: 0, located: false,
+    outcome: undefined as Outcome, elim: false, ks: 0, demoKs: 0, hypeDone: false, lastPitcher: 0,
   };
   audio.volume = st.vol;
   const chap = (s: Scene) => st.chapters.find((c) => c.id === s) ?? st.chapters[st.chapters.length - 2];
@@ -56,6 +60,13 @@ export function mountScreen(root: HTMLElement, team: Team) {
   const pairCard = h("div.panel.pair-card.hidden");
   const playersCard = h("div.panel.players-card.hidden");
   const dock = h("div.dock");
+  const seriesStrip = h("div.series.hidden");
+  const kBoard = h("div.kboard.hidden");
+  const closerEl = h("div.closer.hidden");
+  const musicCard = h("div.panel.music-card.hidden");
+  const music = new Music();
+  const hype = new HypePlayer();
+  const P = team.set === "padres";
   const brandLogo = team.logo ? h("img.brand-logo", { src: team.logo, alt: "" }) : null;
   const brand = h("div.brand", {}, brandLogo, h("span.brand-dot"), h("b", {}, "ROOM OS"), h("span", {}, " LITE"), h("i", {}, team.venue));
   const startCover = h("div.start", {},
@@ -66,7 +77,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
       h("button.start-btn", { onclick: () => start() }, "Tap to start"),
       h("p.start-hint", {}, "Turn the sound up. On iPhone or iPad, switch off silent mode."),
     ));
-  const screen = h("div.screen", { "data-set": team.set, style: { "--team": team.color, "--alt": team.alt } as any }, reel.el, tod, fw.canvas, flash, h("div.scrim"), brand, chapterCard, bug, lower, jumbo, toast, dayBar, pairChip, pairCard, playersCard, dock, egg, startCover);
+  const screen = h("div.screen", { "data-set": team.set, style: { "--team": team.color, "--alt": team.alt } as any }, reel.el, tod, fw.canvas, flash, h("div.scrim"), brand, seriesStrip, kBoard, chapterCard, bug, lower, jumbo, closerEl, toast, dayBar, music.el, pairChip, pairCard, playersCard, musicCard, dock, hype.el, egg, startCover);
   root.replaceChildren(screen);
 
   // ---------- controls
@@ -80,11 +91,14 @@ export function mountScreen(root: HTMLElement, team: Team) {
   add(dock,
     h("button.dock-btn.primary", { onclick: () => trigger(demoKind(team), true) }, "Demo moment"),
     h("button.dock-btn.primary2", { onclick: () => playDay() }, "Play full day (demo)"),
-    h("button.dock-btn", { onclick: () => trigger("chant") }, team.set === "msu" ? "Cowbells" : "Chant"),
+    h("button.dock-btn", { onclick: () => trigger("chant") }, team.set === "msu" ? "Cowbells" : P ? "Let's go Padres" : "Chant"),
+    hypePlan(team, null) ? h("button.dock-btn.hot", { onclick: () => playHype() }, "Hype video") : null,
+    P ? h("div.dock-group", {}, h("button.seg", { onclick: () => trigger("stretch") }, "7th stretch"), h("button.seg", { onclick: () => trigger("eighth") }, "8th inning"), h("button.seg", { onclick: () => trigger("closer") }, "Closer"), h("button.seg", { onclick: () => trigger("strikeout") }, "K")) : null,
     sceneGroup,
     h("label.dock-slider", {}, h("span", {}, "Volume"), vol),
     h("label.dock-slider", {}, h("span", {}, "TV delay"), delay, delayLbl),
     h("button.dock-btn", { onclick: () => togglePanel(playersCard) }, "My players"),
+    h("button.dock-btn", { onclick: () => togglePanel(musicCard) }, "Music"),
     h("button.dock-btn", { onclick: () => togglePanel(pairCard) }, "Phone remote"),
     document.fullscreenEnabled || (document as any).webkitFullscreenEnabled ? h("button.dock-btn", { onclick: () => fullscreen(true) }, "Full screen") : null,
     h("a.dock-btn", { href: "#/" }, "Change team"),
@@ -101,7 +115,8 @@ export function mountScreen(root: HTMLElement, team: Team) {
     st.scene = s;
     const c = chap(s);
     renderScenes();
-    reel.set(playlist(team.set, s));
+    reel.set(playlist(team.set, s === "postgame" && (st.outcome === "loss" || st.outcome === "over") && P ? "postLoss" : s));
+    if (changed && s === "walkIn" && P && st.started && !st.dayDemo && !st.hypeDone) { st.hypeDone = true; setTimeout(() => playHype(), 6000); }
     screen.dataset.tod = c.tod;
     if (st.started) {
       void audio.bed(c.bed);
@@ -126,7 +141,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
 
   // Idle: hide the dock and cursor after a few seconds without input.
   let idle = 0;
-  const panelsOpen = () => !pairCard.classList.contains("hidden") || !playersCard.classList.contains("hidden");
+  const panelsOpen = () => !pairCard.classList.contains("hidden") || !playersCard.classList.contains("hidden") || !musicCard.classList.contains("hidden");
   const wake = () => { screen.classList.remove("idle"); clearTimeout(idle); idle = window.setTimeout(() => { if (!panelsOpen()) screen.classList.add("idle"); }, 4500); };
   ["mousemove", "touchstart", "keydown", "click"].forEach((e) => window.addEventListener(e, wake, { passive: true }));
   wake();
@@ -163,6 +178,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
     togglePanel(pairCard, true);
     setTimeout(() => { if (!link.phones) togglePanel(pairCard, false); }, 25000);
     watcher.start();
+    music.prepare();
     broadcast();
   }
   function fullscreen(toggle: boolean) {
@@ -190,6 +206,8 @@ export function mountScreen(root: HTMLElement, team: Team) {
     if (!st.started) start();
     const m = moment(team, k);
     if (m.quiet) { m.cues.forEach((c) => void audio.play(c.s, c)); return; }
+    // Strikeouts come fast; count them and toast right away instead of waiting in the moment queue.
+    if (k === "strikeout") { m.cues.forEach((c) => void audio.play(c.s, c)); st.demoKs += demo || !st.shown || st.shown.state !== "in" ? 1 : 0; renderK(); toastMsg(m.title ?? "Strikeout", m.sub ?? ""); link.send({ t: "moment", k, title: m.title }); return; }
     st.queue.push({ k, demo });
     if (!st.busy) void runQueue();
   }
@@ -199,7 +217,12 @@ export function mountScreen(root: HTMLElement, team: Team) {
     st.busy = false;
   }
   function runMoment(m: Moment, k: MomentKind, demo?: boolean): Promise<void> {
-    m.cues.forEach((c) => void audio.play(c.s, c));
+    const song = m.music && music.enabled;
+    m.cues.filter((c) => !(song && c.local)).forEach((c) => void audio.play(c.s, c));
+    if (song) setTimeout(() => void music.play(m.music!, m.musicSecs), k === "closer" ? 5500 : k === "hr" ? 6000 : k === "stretch" ? 4500 : 2500);
+    if (k === "strikeout") { st.demoKs += demo || !st.shown || st.shown.state !== "in" ? 1 : 0; renderK(); }
+    if (k === "closer") return showCloser(demo);
+    if (k === "loss" || k === "over" || k === "win") { st.outcome = k === "win" ? "win" : k; rechapter(); if (!st.dayDemo) setScene("postgame", false); }
     link.send({ t: "moment", k, title: m.title });
     if (m.fireworks) fw.show(m.fireworks);
     if (m.celebrate) reel.celebrate(playlist(team.set, "celebrate"), m.celebrate);
@@ -210,7 +233,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
     $(".jumbo-title", jumbo)!.textContent = m.title;
     $(".jumbo-sub", jumbo)!.textContent = demo ? `${m.sub ?? ""}  ·  Demo` : m.sub ?? "";
     jumbo.classList.remove("show"); void jumbo.offsetWidth; jumbo.classList.add("show");
-    return wait(k === "win" ? 9000 : 6500).then(() => { jumbo.classList.remove("show"); return wait(700); });
+    return wait(m.hold ?? (k === "win" ? 9000 : 6500)).then(() => { jumbo.classList.remove("show"); return wait(700); });
   }
   let toastT = 0;
   function toastMsg(a: string, b: string) {
@@ -254,8 +277,10 @@ export function mountScreen(root: HTMLElement, team: Team) {
         await wait(9000); if (run !== st.dayDemo) return;
         trigger("start", true); await wait(12000); if (run !== st.dayDemo) return;
         trigger(demoKind(team), true); await wait(14000); if (run !== st.dayDemo) return;
-        trigger("chant", true); await wait(secs * 1000 - 35000);
+        trigger("chant", true); await wait(P ? 4000 : secs * 1000 - 35000);
+        if (P) { trigger("strikeout", true); await wait(5000); trigger("closer", true); await wait(secs * 1000 - 44000); }
       } else if (c.id === "postgame") {
+        st.outcome = "win"; rechapter(); setScene("postgame"); renderDayBar(i, list.length, "Postgame");
         trigger("win", true); await wait(secs * 1000);
       } else await wait(secs * 1000);
     }
@@ -299,7 +324,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
     if (sim) { st.ev = { id: "sim", date: new Date().toISOString() }; st.located = true; return; }
     try { st.ev = await findEvent(team); st.err = ""; } catch { st.err = "net"; }
     st.located = true;
-    if (st.ev) { st.chapters = chapters(team, st.ev.date); renderScenes(); }
+    if (st.ev) { rechapter(); if (tracker && !tracker.gamePk) void tracker.follow(st.ev.date); }
     renderBug();
   }
   async function poll() {
@@ -330,6 +355,10 @@ export function mountScreen(root: HTMLElement, team: Team) {
     if (pick && pick !== st.shown) {
       const prev = st.shown;
       st.shown = pick;
+      const fl = seriesFlag(pick.series), elim = fl === "elim" || fl === "decider";
+      if (elim !== st.elim) { st.elim = elim; rechapter(); }
+      if (pick.state === "post" && !st.outcome && !prev) { st.outcome = pick.us.score > pick.them.score ? "win" : pick.series?.completed ? "over" : "loss"; rechapter(); }
+      renderSeries(); renderK();
       if (prev && !st.dayDemo) for (const k of diff(team, prev, pick)) trigger(k);
       if (!st.sceneLocked) setScene(sceneFor(team, pick.state, (Date.parse(pick.date) - Date.now()) / 60000), false, !prev && !st.started);
       renderBug();
@@ -378,7 +407,7 @@ export function mountScreen(root: HTMLElement, team: Team) {
   }
   function togglePanel(p: HTMLElement, on?: boolean) {
     const show = on ?? p.classList.contains("hidden");
-    [pairCard, playersCard].forEach((x) => x.classList.toggle("hidden", x === p ? !show : true));
+    [pairCard, playersCard, musicCard].forEach((x) => x.classList.toggle("hidden", x === p ? !show : true));
     wake();
   }
   link.onStatus = () => renderPair();
@@ -391,6 +420,8 @@ export function mountScreen(root: HTMLElement, team: Team) {
     else if (m.t === "step") stepScene(Number(m.v));
     else if (m.t === "day") (m.v === "stop" ? stopDay() : void playDay());
     else if (m.t === "egg") fanClub();
+    else if (m.t === "hype") (hype.playing ? hype.stop() : playHype());
+    else if (m.t === "music") music.setEnabled(!!m.v);
     else if (m.t === "players" && Array.isArray(m.v)) { setPlayers(m.v); toastMsg("My Players updated", `${m.v.length} on the list`); }
     else if (m.t === "start") start();
     else if (m.t === "hello") broadcast();
@@ -404,10 +435,72 @@ export function mountScreen(root: HTMLElement, team: Team) {
     link.send({
       t: "state", team: { key: team.key, name: team.name, fullName: team.fullName, abbr: team.abbr, color: team.color, alt: team.alt, logo: team.logo, league: team.league, set: team.set },
       started: st.started, scene: st.scene, scenes: st.chapters.map((c) => ({ id: c.id, label: c.label })), vol: st.vol, delay: st.delay, day: !!st.dayDemo && !dayBar.classList.contains("hidden"), players,
+      hype: !!hypePlan(team, null), music: music.now ? { title: music.now.title, artist: music.now.artist, url: openUrl(music.now) } : null, musicOn: music.enabled,
+      series: s?.series ? { text: [s.series.note, s.series.summary].filter(Boolean).join(" · "), flag: seriesFlag(s.series) } : null,
       score: s ? { state: s.state, detail: s.state === "pre" ? fmtTime(s.date) : s.detail, us: [s.us.abbr, s.us.score], them: [s.them.abbr, s.them.score] } : null,
     });
   }
 
   // For tests and the curious: window.lite.trigger("hr"), lite.fanClub(), lite.playDay()
-  (window as any).lite = { trigger, state: st, link, fanClub, playDay, stopDay, setScene, alert: (a: Alert) => watcher.onAlert(a), LABEL };
+  (window as any).lite = { trigger, state: st, link, fanClub, playDay, stopDay, setScene, alert: (a: Alert) => watcher.onAlert(a), LABEL, playHype, hype, music, renderK, showCloser };
+
+  // ---------- chapters, series strip, K board, closer, hype, music (Padres extras)
+  function rechapter() { st.chapters = chapters(team, st.ev?.date, st.outcome, st.elim); renderScenes(); }
+  function renderSeries() {
+    const x = st.shown?.series;
+    if (!x || (!x.summary && !x.note)) { seriesStrip.classList.add("hidden"); return; }
+    const fl = seriesFlag(x);
+    fill(seriesStrip, x.note ? h("span.sr-note", {}, x.note) : null, x.summary ? h("span.sr-sum", {}, x.summary) : null,
+      fl === "elim" ? h("b.sr-flag", {}, "WIN OR GO HOME") : fl === "decider" ? h("b.sr-flag", {}, "WINNER TAKE ALL") : fl === "clinch" ? h("b.sr-flag.good", {}, "ONE WIN TO ADVANCE") : null);
+    seriesStrip.classList.remove("hidden");
+  }
+  function renderK() {
+    const n = Math.max(st.ks, st.demoKs);
+    if (SPORT[team.league] !== "baseball" || (!n && st.shown?.state !== "in")) { kBoard.classList.add("hidden"); return; }
+    fill(kBoard, h("div.kb-head", {}, `${team.abbr} K`), h("div.kb-cards", {}, ...Array.from({ length: Math.min(n, 18) }, (_, i) => h(`span${(i + 1) % 3 === 0 ? ".flip" : ""}`, {}, "K"))), h("div.kb-n", {}, String(n)));
+    kBoard.classList.remove("hidden");
+  }
+  function showCloser(demo?: boolean): Promise<void> {
+    const name = P ? PADRES_CLOSER.name : "Closer";
+    fill(closerEl, h("div.cl-lights"), h("div.cl-board", {},
+      h("div.cl-kicker", {}, "Now pitching"), h("div.cl-name", {}, name.toUpperCase()), P ? h("div.cl-nick", {}, PADRES_CLOSER.nickname) : null,
+      h("div.cl-sub", {}, demo ? "Closer entrance  ·  Demo" : "Closer entrance"),
+      P ? h("a.cl-spotify", { href: openUrl({ uri: "spotify:track:0esdrDhHyPjglg5AmXfJDV", title: "", artist: "" }), target: "_blank", rel: "noopener" }, music.enabled ? "Blind by Korn is playing on Spotify  ·  Open in Spotify" : "Play Blind by Korn on Spotify") : null));
+    closerEl.classList.remove("hidden"); void closerEl.offsetWidth; closerEl.classList.add("show");
+    return wait(14000).then(() => { closerEl.classList.remove("show"); return wait(800); }).then(() => closerEl.classList.add("hidden"));
+  }
+  function playHype() {
+    if (!st.started) start();
+    const plan = hypePlan(team, st.shown);
+    if (!plan) return;
+    togglePanel(pairCard, false);
+    plan.audio.forEach((a) => void audio.play(a.s, { at: a.at, gain: a.gain, duck: a.duck }));
+    if (music.enabled) void music.play(P ? { uri: "spotify:track:1LsiaD8GLyIuXtqeEPO5sg", title: "Hells Bells", artist: "AC/DC" } : { uri: "spotify:track:3uQyUElOQBj8aZ1KoQgusc", title: "Go State / Hail State", artist: "Mississippi State University Bands" }, plan.steps.reduce((a, x) => a + x.secs, 0));
+    link.send({ t: "moment", k: "hype", title: "Hype video" });
+    void hype.play(plan, P ? `${import.meta.env.BASE_URL}media/padres_hype.mp4` : undefined);
+  }
+  hype.onEnd = () => { music.stop(); broadcast(); };
+  music.onDuck = (on) => audio.musicDuck(on);
+  music.onChange = () => { renderMusicCard(); broadcast(); };
+  function renderMusicCard() {
+    fill(musicCard, h("h3", {}, "Music"),
+      h("p", {}, "Real songs play through Spotify at the big moments: the walkout, home runs, the 7th inning stretch, the 8th inning and the closer. The crowd dips under the music."),
+      h("p.muted", {}, "Logged in to Spotify in this browser? You get full songs. Not logged in? Spotify plays 30 second previews."),
+      h("div.mc-row", {},
+        h("button.dock-btn.primary", { onclick: () => { window.open(LOGIN_URL, "_blank", "noopener"); music.markConnected(); } }, music.connected ? "Spotify connected  ·  Log in again" : "Connect Spotify"),
+        h(`button.dock-btn${music.enabled ? ".on" : ""}`, { onclick: () => music.setEnabled(!music.enabled) }, music.enabled ? "Music on" : "Music off"),
+        h("button.dock-btn", { onclick: () => void music.play(P ? { uri: "spotify:track:2m1hi0nfMR9vdGC8UcrnwU", title: "All The Small Things", artist: "blink-182" } : { uri: "spotify:track:1LsiaD8GLyIuXtqeEPO5sg", title: "Hells Bells", artist: "AC/DC" }, 30) }, "Test a song")),
+      h("p.muted", {}, "Connect Spotify opens Spotify's own login in a new tab. Log in there, come back to this tab, and you're set."),
+      h("button.x", { onclick: () => togglePanel(musicCard, false), "aria-label": "Close" }, "×"));
+  }
+  renderMusicCard();
+  const tracker = team.mlbId ? new MlbTracker(team.mlbId) : null;
+  if (tracker) {
+    tracker.onUpdate = (x: MlbLive) => setTimeout(() => {
+      st.ks = x.ks; renderK();
+      if (P && x.usPitching && x.pitcherId === PADRES_CLOSER.id && st.lastPitcher && st.lastPitcher !== PADRES_CLOSER.id) trigger("closer");
+      st.lastPitcher = x.usPitching ? x.pitcherId : st.lastPitcher;
+    }, st.delay * 1000);
+    tracker.run(() => st.shown?.state === "in");
+  }
 }

@@ -5,7 +5,7 @@ export type SetId = "padres" | "saints" | "olemiss" | "msu" | "trashpandas" | "s
 
 export interface Team {
   key: string; league: League; espnId: string; abbr: string; name: string; fullName: string;
-  color: string; alt: string; logo: string; set: SetId; venue: string; pack: boolean; tag?: string;
+  color: string; alt: string; logo: string; set: SetId; venue: string; pack: boolean; tag?: string; mlbId?: number;
 }
 
 export const SPORT: Record<League, Sport> = { mlb: "baseball", nfl: "football", ncaaf: "football", wnba: "basketball", milb: "baseball" };
@@ -13,14 +13,14 @@ export const PATH: Record<League, string> = { mlb: "baseball/mlb", nfl: "footbal
 export const LEAGUE_NAME: Record<League, string> = { mlb: "MLB", nfl: "NFL", ncaaf: "College", wnba: "WNBA", milb: "MiLB" };
 
 export const PACKS: Team[] = [
+  { key: "sd", league: "mlb", espnId: "25", mlbId: 135, abbr: "SD", name: "Padres", fullName: "San Diego Padres", color: "#2f241d", alt: "#ffc425",
+    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png", set: "padres", venue: "San Diego to Petco Park", pack: true, tag: "Full game day" },
   { key: "msu", league: "ncaaf", espnId: "344", abbr: "MSST", name: "Bulldogs", fullName: "Mississippi State", color: "#5d1725", alt: "#c1c6c8",
     logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/344.png", set: "msu", venue: "Huntsville to Davis Wade Stadium", pack: true, tag: "Full game day" },
   { key: "rc", league: "milb", espnId: "559", abbr: "RC", name: "Trash Pandas", fullName: "Rocket City Trash Pandas", color: "#0b2e4f", alt: "#e2b13c",
     logo: "https://www.mlbstatic.com/team-logos/559.svg", set: "trashpandas", venue: "Toyota Field, Madison AL", pack: true, tag: "Double-A" },
   { key: "sky", league: "wnba", espnId: "19", abbr: "CHI", name: "Sky", fullName: "Chicago Sky", color: "#418fde", alt: "#ffcd00",
     logo: "https://a.espncdn.com/i/teamlogos/wnba/500/chi.png", set: "sky", venue: "Sky home game", pack: true, tag: "WNBA" },
-  { key: "sd", league: "mlb", espnId: "25", abbr: "SD", name: "Padres", fullName: "San Diego Padres", color: "#2f241d", alt: "#ffc425",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png", set: "padres", venue: "Petco Park, behind the plate", pack: true },
   { key: "no", league: "nfl", espnId: "18", abbr: "NO", name: "Saints", fullName: "New Orleans Saints", color: "#101820", alt: "#d3bc8d",
     logo: "https://a.espncdn.com/i/teamlogos/nfl/500/no.png", set: "saints", venue: "The Superdome", pack: true },
   { key: "miss", league: "ncaaf", espnId: "145", abbr: "MISS", name: "Ole Miss", fullName: "Ole Miss Rebels", color: "#13294b", alt: "#ce1126",
@@ -52,7 +52,8 @@ export function teamList(league: League): Promise<Team[]> {
 
 export async function resolveTeam(key: string | null): Promise<Team | null> {
   if (!key) return null;
-  const pack = PACKS.find((p) => p.key === key.toLowerCase());
+  const k = ({ padres: "sd", saints: "no", olemiss: "miss", state: "msu", trashpandas: "rc" } as Record<string, string>)[key.toLowerCase()] ?? key.toLowerCase();
+  const pack = PACKS.find((p) => p.key === k);
   if (pack) return pack;
   const m = /^(mlb|nfl|ncaaf|wnba):(\d+)$/.exec(key);
   if (!m) return null;
